@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Woodson Delivery Board</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <style>
+    :root {
+      --woodson-maroon: #6b0016;
+      --woodson-maroon-dark: #47000f;
+      --woodson-gold: #d6b36f;
+      --panel: rgba(255,255,255,0.90);
+      --text: #17212b;
+      --muted: #617283;
+      --shadow: 0 24px 60px rgba(23, 33, 43, 0.16);
+      --highlight-border: rgba(107,0,22,0.26);
+      --section-bg: rgba(107,0,22,0.05);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(214,179,111,0.18), transparent 25%),
+        linear-gradient(180deg, #eef3f7 0%, #dce7ef 100%);
+    }
+
+    body {
+      padding: 20px;
+    }
+
+    .page {
+      max-width: 1700px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+      min-height: calc(100vh - 40px);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(107,0,22,0.95), rgba(71,0,15,0.93));
+      color: #fff;
+      border-radius: 26px;
+      padding: 24px 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 14% 22%, rgba(255,255,255,0.12), transparent 16%),
+        radial-gradient(circle at 82% 18%, rgba(214,179,111,0.18), transparent 18%),
+        radial-gradient(circle at 88% 78%, rgba(255,255,255,0.08), transparent 20%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      letter-spacing: -0.03em;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      min-height: 0;
+    }
+
+    .sidebar, .maps-shell {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .sidebar {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .sidebar h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .sidebar p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.95rem;
+    }
+
+    .region-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .region-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 6px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: var(--section-bg);
+      border: 1px solid rgba(107,0,22,0.10);
+    }
+
+    .region-title strong {
+      color: var(--woodson-maroon);
+      font-size: 0.98rem;
+    }
+
+    .region-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .store-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .store-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      padding: 14px 14px 13px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.80);
+      border: 1px solid rgba(23,33,43,0.08);
+      box-shadow: 0 10px 20px rgba(23,33,43,0.06);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .store-link:hover,
+    .store-link:focus,
+    .store-link.active {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px rgba(23,33,43,0.10);
+      border-color: var(--highlight-border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(107,0,22,0.05));
+      outline: none;
+    }
+
+    .store-link strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 1rem;
+    }
+
+    .store-link span {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .maps-shell {
+      padding: 14px;
+      min-height: 0;
+      display: grid;
+      gap: 14px;
+      grid-template-rows: auto 1fr;
+    }
+
+    .maps-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 6px 0;
+      flex-wrap: wrap;
+    }
+
+    .maps-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .maps-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .maps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .map-card {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 10px;
+      min-height: 0;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(23,33,43,0.07);
+      border-radius: 22px;
+      padding: 12px;
+    }
+
+    .map-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 4px 4px 0;
+    }
+
+    .map-card-header strong {
+      font-size: 1rem;
+      color: var(--woodson-maroon);
+    }
+
+    .map-card-header span {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .map {
+      min-height: 620px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #d9e7f2;
+    }
+
+    .custom-pin-wrap {
+      position: relative;
+      width: 26px;
+      height: 34px;
+    }
+
+    .custom-pin {
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      background: linear-gradient(180deg, var(--woodson-maroon), var(--woodson-maroon-dark));
+      transform: rotate(-45deg);
+      border: 2px solid rgba(255,255,255,0.96);
+      box-shadow: 0 10px 24px rgba(107,0,22,0.35);
+      position: absolute;
+      left: 2px;
+      top: 2px;
+    }
+
+    .custom-pin::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    .custom-pin-pulse {
+      position: absolute;
+      left: 4px;
+      top: 6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(107,0,22,0.18);
+      animation: pulseRing 2s infinite;
+      z-index: -1;
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.7); opacity: 0.7; }
+      70% { transform: scale(2.1); opacity: 0; }
+      100% { transform: scale(0.7); opacity: 0; }
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 18px;
+      box-shadow: 0 14px 28px rgba(23,33,43,0.16);
+      overflow: hidden;
+    }
+
+    .leaflet-popup-content {
+      margin: 0;
+      min-width: 280px;
+    }
+
+    .popup-card {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .popup-image {
+      display: block;
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: #e7edf3;
+    }
+
+    .popup-body {
+      padding: 14px;
+    }
+
+    .popup-card h3 {
+      margin: 0 0 8px;
+      color: var(--woodson-maroon);
+      font-size: 1rem;
+    }
+
+    .popup-meta {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .popup-meta div {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .popup-meta strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .popup-card a.action-primary,
+    .popup-card a.action-secondary {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    .popup-card a.action-primary {
+      background: linear-gradient(180deg, var(--woodson-maroon), var(--woodson-maroon-dark));
+      color: #fff;
+    }
+
+    .popup-card a.action-secondary {
+      background: rgba(107,0,22,0.08);
+      color: var(--woodson-maroon);
+      border: 1px solid rgba(107,0,22,0.15);
+    }
+
+    @media (max-width: 1320px) {
+      .map {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .maps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .map {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .page {
+        min-height: calc(100vh - 24px);
+      }
+
+      .hero {
+        padding: 22px 20px;
+      }
+
+      .sidebar, .maps-shell {
+        border-radius: 20px;
+      }
+
+      .map {
+        min-height: 320px;
+      }
+
+      .leaflet-popup-content {
+        min-width: 250px;
+      }
+
+      .popup-image {
+        height: 130px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Woodson Delivery Board</h1>
+      </div>
+    </header>
+
+    <main class="content">
+      <aside class="sidebar">
+        <h2>Branches</h2>
+        <section class="region-group">
+          <div class="region-title">
+            <strong>South Region</strong>
+            <span>4 Branches</span>
+          </div>
+          <div class="store-list" id="southList"></div>
+        </section>
+
+        <section class="region-group">
+          <div class="region-title">
+            <strong>North Region</strong>
+            <span>3 Branches</span>
+          </div>
+          <div class="store-list" id="northList"></div>
+        </section>
+      </aside>
+
+      <section class="maps-shell" aria-labelledby="mapsTitle">
+        <div class="maps-header">
+
+        </div>
+
+        <div class="maps-grid">
+          <section class="map-card" id="southCard">
+            <div class="map-card-header">
+              <strong>South Region</strong>
+              <span>Brenham, Bryan, Caldwell, Lexington</span>
+            </div>
+            <div id="southMap" class="map" aria-label="South region dispatch map"></div>
+          </section>
+
+          <section class="map-card" id="northCard">
+            <div class="map-card-header">
+              <strong>North Region</strong>
+              <span>Groesbeck, Mexia, Buffalo</span>
+            </div>
+            <div id="northMap" class="map" aria-label="North region dispatch map"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    const stores = [
+      {
+        name: "Brenham",
+        region: "south",
+        address: "301 E. Clinton St., Brenham, TX 77833",
+        phone: "979-836-7933",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_e4bef13eccc0407385a7152fcff2f035~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-brenham.png",
+        lat: 30.16651749,
+        lon: -96.39438292,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1H_SU9TddbaTNEvcC6qgtBDW_ieGrdeHhzRe70gucjpU/"
+      },
+      {
+        name: "Bryan",
+        region: "south",
+        address: "105 Pease St., Bryan, TX 77803",
+        phone: "979-822-3765",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_bac1afac1160451b8a1872fbdbde7363~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-bryan.png",
+        lat: 30.66207400,
+        lon: -96.37382474,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1TcpdqIYkMvEu00OFsjWbWPR6nxMIG98LVpPmmNI-UCI/"
+      },
+      {
+        name: "Caldwell",
+        region: "south",
+        address: "702 W. Buck St., Caldwell, TX 77836",
+        phone: "979-567-9805",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_10d6752e582f4cf5b147bef46f4ee4a2~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-caldwell.png",
+        lat: 30.52713771,
+        lon: -96.69807442,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1BEVPyvYREcnsiH1GESJ21qVVAI_mVsXFkEMjKVjK0js/"
+      },
+      {
+        name: "Lexington",
+        region: "south",
+        address: "8714 N. Hwy. 77, Lexington, TX 78947",
+        phone: "979-773-2238",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_5d638a9ba44446ab879100b3e51c3d19~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-lexington.png",
+        lat: 30.41206259,
+        lon: -97.00233348,
+        boardUrl: "https://docs.google.com/spreadsheets/d/12h0lwSEdiqTMiISbwyjVYfP7kjPd67g4Jt6N1VG3Cbw/"
+      },
+      {
+        name: "Groesbeck",
+        region: "north",
+        address: "1219 E. Yeagua St., Groesbeck, TX 76642",
+        phone: "254-729-2865",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_9c60a78b90c1467d9a82f162181f0f3e~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-groesbeck.png",
+        lat: 31.51573255,
+        lon: -96.51423470,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1qxFLWSiRK1vFJgz1J-Z1gmE93PNDUV9LowhcVTQUDl0/"
+      },
+      {
+        name: "Mexia",
+        region: "north",
+        address: "1127 Hwy. 84, Mexia, TX 76667",
+        phone: "254-562-9351",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_a640e6f19e2a49ea849b31d2dd5007fd~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-mexia.png",
+        lat: 31.68559503,
+        lon: -96.46521524,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1EdrIVAuu0jxtq2AeFo1bdP_biNdtBtbG-lwsj4g4zzI/"
+      },
+      {
+        name: "Buffalo",
+        region: "north",
+        address: "2871 W. Commerce St., Buffalo, TX 75831",
+        phone: "903-322-4638",
+        imageUrl: "https://static.wixstatic.com/media/aba64d_f374f2a488944e169c04fe0ecfd41300~mv2.png/v1/fill/w_369%2Ch_212%2Cal_c%2Cq_95%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/store-buffalo.png",
+        lat: 31.44664532,
+        lon: -96.08049271,
+        boardUrl: "https://docs.google.com/spreadsheets/d/1rhEyZ4UNqushNAntIWexlJdqOvzPUROEUvSEmXOmPDA/"
+      }
+    ];
+
+    const southList = document.getElementById("southList");
+    const northList = document.getElementById("northList");
+    const southCard = document.getElementById("southCard");
+    const northCard = document.getElementById("northCard");
+
+    const mapConfigs = {
+      south: {
+        map: L.map("southMap", { zoomControl: true, scrollWheelZoom: true }),
+        bounds: [],
+        markers: new Map(),
+        listItems: new Map(),
+        resetTimer: null,
+        card: southCard,
+        initialBounds: null
+      },
+      north: {
+        map: L.map("northMap", { zoomControl: true, scrollWheelZoom: true }),
+        bounds: [],
+        markers: new Map(),
+        listItems: new Map(),
+        resetTimer: null,
+        card: northCard,
+        initialBounds: null
+      }
+    };
+
+    Object.values(mapConfigs).forEach(cfg => {
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors',
+        referrerPolicy: "strict-origin-when-cross-origin"
+      }).addTo(cfg.map);
+    });
+
+    const pinIcon = L.divIcon({
+      className: "",
+      html: '<div class="custom-pin-wrap"><div class="custom-pin-pulse"></div><div class="custom-pin"></div></div>',
+      iconSize: [26, 34],
+      iconAnchor: [13, 34],
+      popupAnchor: [0, -28]
+    });
+
+    function clearResetTimer(region) {
+      const cfg = mapConfigs[region];
+      if (cfg.resetTimer) {
+        clearTimeout(cfg.resetTimer);
+        cfg.resetTimer = null;
+      }
+    }
+
+    function resetRegionView(region) {
+      const cfg = mapConfigs[region];
+      if (!cfg.initialBounds) return;
+
+      cfg.map.closePopup();
+      cfg.map.fitBounds(cfg.initialBounds, {
+        padding: [45, 45],
+        animate: true,
+        duration: 0.4
+      });
+
+      cfg.listItems.forEach(el => el.classList.remove("active"));
+    }
+
+    function scheduleReset(region) {
+      clearResetTimer(region);
+      const cfg = mapConfigs[region];
+      cfg.resetTimer = setTimeout(() => {
+        const hoveredList = Array.from(cfg.listItems.values()).some(el => el.matches(":hover"));
+        const hoveredPopup = Array.from(cfg.markers.values()).some(marker => {
+          const popupEl = marker.getPopup() && marker.getPopup().getElement();
+          return popupEl && popupEl.matches(":hover");
+        });
+        const hoveredCard = cfg.card.matches(":hover");
+
+        if (hoveredList || hoveredPopup || hoveredCard) return;
+        resetRegionView(region);
+      }, 220);
+    }
+
+    function setActiveStore(region, name) {
+      Object.entries(mapConfigs).forEach(([r, cfg]) => {
+        cfg.listItems.forEach((el, key) => {
+          if (r === region && key === name) {
+            el.classList.add("active");
+          } else {
+            el.classList.remove("active");
+          }
+        });
+      });
+    }
+
+    function openStorePopup(store, shouldPan = true) {
+      const cfg = mapConfigs[store.region];
+      clearResetTimer(store.region);
+
+      const marker = cfg.markers.get(store.name);
+      if (!marker) return;
+
+      marker.openPopup();
+      if (shouldPan) {
+        cfg.map.panTo(marker.getLatLng(), {
+          animate: true,
+          duration: 0.35
+        });
+      }
+      setActiveStore(store.region, store.name);
+    }
+
+    function closeStorePopup(store) {
+      const cfg = mapConfigs[store.region];
+      const marker = cfg.markers.get(store.name);
+      if (!marker) return;
+      marker.closePopup();
+      const el = cfg.listItems.get(store.name);
+      if (el) el.classList.remove("active");
+      scheduleReset(store.region);
+    }
+
+    function createStoreLink(store) {
+      const link = document.createElement("a");
+      link.className = "store-link";
+      link.href = store.boardUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.innerHTML = `<strong>${store.name}</strong><span>${store.address}</span>`;
+
+      const cfg = mapConfigs[store.region];
+      cfg.listItems.set(store.name, link);
+
+      link.addEventListener("mouseenter", () => openStorePopup(store, true));
+      link.addEventListener("focus", () => openStorePopup(store, true));
+
+      link.addEventListener("mouseleave", () => {
+        setTimeout(() => {
+          const marker = cfg.markers.get(store.name);
+          const popupEl = marker && marker.getPopup() && marker.getPopup().getElement();
+          if (popupEl && popupEl.matches(":hover")) return;
+          closeStorePopup(store);
+        }, 180);
+      });
+
+      link.addEventListener("blur", () => {
+        setTimeout(() => {
+          const marker = cfg.markers.get(store.name);
+          const popupEl = marker && marker.getPopup() && marker.getPopup().getElement();
+          if (popupEl && popupEl.matches(":focus-within")) return;
+          closeStorePopup(store);
+        }, 180);
+      });
+
+      return link;
+    }
+
+    function buildPopupHtml(store) {
+      const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.address)}`;
+
+      return `
+        <div class="popup-card">
+          <img class="popup-image" src="${store.imageUrl}" alt="${store.name} store image" loading="lazy" />
+          <div class="popup-body">
+            <h3>${store.name}</h3>
+            <div class="popup-meta">
+              <div>
+                <strong>Address</strong>
+                ${store.address}
+              </div>
+              <div>
+                <strong>Phone</strong>
+                <a href="tel:${store.phone}" class="action-secondary" style="padding:0;border:none;background:none;color:var(--woodson-maroon);font-weight:700;">${store.phone}</a>
+              </div>
+            </div>
+            <div class="popup-actions">
+              <a class="action-primary" href="${store.boardUrl}" target="_blank" rel="noopener noreferrer">Open Dispatch Board</a>
+  <!--            <a class="action-secondary" href="${directionsUrl}" target="_blank" rel="noopener noreferrer">Directions</a> -->
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    stores.forEach(store => {
+      const link = createStoreLink(store);
+      if (store.region === "south") {
+        southList.appendChild(link);
+      } else {
+        northList.appendChild(link);
+      }
+
+      const cfg = mapConfigs[store.region];
+      const marker = L.marker([store.lat, store.lon], { icon: pinIcon }).addTo(cfg.map);
+
+      marker.bindPopup(buildPopupHtml(store), {
+        autoClose: false,
+        closeButton: true,
+        closeOnClick: false
+      });
+
+      cfg.markers.set(store.name, marker);
+      cfg.bounds.push([store.lat, store.lon]);
+
+      marker.on("mouseover", () => openStorePopup(store, false));
+
+      marker.on("mouseout", () => {
+        setTimeout(() => {
+          const popupEl = marker.getPopup() && marker.getPopup().getElement();
+          const listEl = cfg.listItems.get(store.name);
+          if (popupEl && popupEl.matches(":hover")) return;
+          if (listEl && listEl.matches(":hover")) return;
+          closeStorePopup(store);
+        }, 180);
+      });
+
+      marker.on("click", () => openStorePopup(store, false));
+
+      marker.on("popupopen", () => {
+        clearResetTimer(store.region);
+        const popupEl = marker.getPopup().getElement();
+        if (!popupEl) return;
+
+        popupEl.addEventListener("mouseenter", () => {
+          clearResetTimer(store.region);
+          setActiveStore(store.region, store.name);
+        });
+
+        popupEl.addEventListener("mouseleave", () => {
+          const listEl = cfg.listItems.get(store.name);
+          if (listEl && listEl.matches(":hover")) return;
+          closeStorePopup(store);
+        });
+      });
+
+      marker.on("popupclose", () => {
+        scheduleReset(store.region);
+      });
+    });
+
+    Object.entries(mapConfigs).forEach(([region, cfg]) => {
+      cfg.initialBounds = L.latLngBounds(cfg.bounds);
+      cfg.map.fitBounds(cfg.initialBounds, {
+        padding: [45, 45]
+      });
+
+      cfg.card.addEventListener("mouseenter", () => clearResetTimer(region));
+      cfg.card.addEventListener("mouseleave", () => scheduleReset(region));
+    });
+  </script>
+</body>
+</html>

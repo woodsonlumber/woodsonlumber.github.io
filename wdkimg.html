@@ -1,0 +1,2689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Door Unit Composer — vNext8</title>
+<style>
+  :root{
+    --bg:#0b0c10; --card:#171925; --border:#26293a; --text:#e9ecf1; --muted:#9aa1b3;
+    --checker1:#22242f; --checker2:#1b1d25;
+    --sale:#ff3b3b;
+    --accent:#6b0016;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#0b0c10,#12131a 30%, #0c0d12);
+    color:var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .container{max-width:1560px; margin:24px auto; padding:0 16px;}
+  .grid{display:grid; grid-template-columns:560px minmax(520px,1fr) 420px; gap:18px; align-items:start;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 6px 30px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .card h2{
+    margin:0;
+    padding:16px 18px;
+    font-size:18px;
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#1b1e2a,#171925);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .badge{
+    font-size:12px; padding:4px 10px; border-radius:999px;
+    border:1px solid #343854; color:#cfd3de; background:#10121b;
+  }
+  .body{padding:16px 18px;}
+  .section-title{
+    margin:14px 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:#aeb3c3;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .row{display:grid; grid-template-columns:240px 1fr; gap:12px; align-items:center; margin-bottom:12px; min-width:0;}
+  label{color:#cfd3de; font-size:13px;}
+  input[type="text"], input[type="number"], select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:12px;
+    background:#0f1017;
+    color:#e9ecf1;
+    border:1px solid var(--border);
+    outline:none;
+    transition:.15s border-color, .15s background;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus{border-color:#3a3f5c; background:#0d0f15;}
+  input[type="checkbox"]{ transform:scale(1.2); }
+  .subgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  button{
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#121421;
+    color:#e9ecf1;
+    cursor:pointer;
+    font-weight:650;
+    letter-spacing:.2px;
+  }
+  button.primary{background:linear-gradient(180deg,#7d0820,#6b0016); border-color:#8a0a22;}
+  button.good{background:linear-gradient(180deg,#1fb87f,#1a9b6b); border-color:#15875e;}
+  button.warn{background:linear-gradient(180deg,#f2b400,#d79500); border-color:#b78100; color:#1a1200;}
+  button.small{padding:6px 10px; border-radius:10px; font-size:12px;}
+  button:disabled{opacity:.55; cursor:not-allowed;}
+  .drop{
+    position:relative;
+    border:1.5px dashed #3a3f5c;
+    background:#0f1118;
+    color:#cfd3de;
+    border-radius:12px;
+    padding:16px;
+    text-align:center;
+    cursor:pointer;
+    user-select:none;
+  }
+  .drop.drag{ border-color:#6b0016; background:#121622; }
+  .clear-btn{
+    position:absolute; top:8px; right:8px;
+    background:#1a1c26; border:1px solid #33384f; color:#cfd3de;
+    padding:2px 8px; border-radius:999px; font-size:12px; cursor:pointer;
+  }
+  .clear-btn:hover{ background:#202337; }
+
+  .preview-wrap{display:flex; flex-direction:column; min-height:740px; }
+  .preview-toolbar{
+    display:flex; gap:12px; align-items:center;
+    padding:10px 12px;
+    background:#10121b;
+    border-bottom:1px solid var(--border);
+  }
+  .preview-toolbar .sp{flex:1;}
+  .preview-stage{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    background:
+      linear-gradient(45deg, var(--checker1) 25%, transparent 25%) -16px 0/32px 32px,
+      linear-gradient(45deg, transparent 75%, var(--checker1) 75%) -16px 0/32px 32px,
+      linear-gradient(45deg, transparent 25%, var(--checker2) 25%) 0 0/32px 32px,
+      linear-gradient(45deg, var(--checker2) 75%, transparent 75%) 0 0/32px 32px;
+  }
+  .preview-canvas{
+    background:#fff;
+    border-radius:0;
+    box-shadow:0 12px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.35);
+    max-width:100%;
+    max-height:100%;
+  }
+  .hint{color:var(--muted); font-size:12px; line-height:1.35;}
+  .order-box{
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#0f1017;
+    padding:10px;
+  }
+  .order-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 8px;
+    border-radius:10px;
+    border:1px solid #2a2e41;
+    background:#0c0d12;
+    margin-bottom:8px;
+  }
+  .order-item:last-child{margin-bottom:0;}
+  .order-item.dragging{opacity:.65;}
+  .order-item.over{outline:2px solid rgba(107,0,22,.6);}
+  .order-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .order-left b{font-size:13px;}
+  .order-left span{font-size:12px; color:#aeb3c3;}
+  .order-actions{display:flex; gap:6px; align-items:center;}
+  .grip{
+    cursor:grab;
+    width:18px; height:18px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:6px;
+    border:1px solid #2a2e41;
+    background:#0f1017;
+    color:#aeb3c3;
+    font-size:12px;
+  }
+  .sliderRow{
+    display:flex; gap:10px; align-items:center;
+  }
+  .sliderRow input[type="range"]{ width:100%; }
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+
+.rightStack{display:flex; flex-direction:column; gap:18px; align-self:start;}
+.rightStack .card{margin:0;}
+
+/* Hide number spinners */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+input[type=number]{ -moz-appearance:textfield; }
+
+/* Stepper */
+.stepper{display:flex; align-items:center; gap:8px; width:100%;}
+.stepper button{width:34px; height:34px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:18px; line-height:1;}
+.stepper button:hover{background:#f6f6f6;}
+.stepper input{flex:1;}
+
+.preview-stage{overflow:hidden; touch-action:none;}
+.preview-canvas{will-change:transform;}
+
+
+.preview-stage{overflow:hidden; touch-action:none;}
+.preview-canvas{border-radius:0!important;}
+
+  .below-preview-grid{ display:grid; grid-template-columns: 1fr; gap:12px; }
+  @media (min-width: 1100px){
+    .below-preview-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  /* tighten vertical spacing */
+  .card{ margin-bottom: 12px; }
+  .card .body{ padding: 12px; }
+  .section-title{ margin: 10px 0 6px; }
+  .hint{ margin-top: 6px; }
+  /* Wall options: keep controls inside card and easy to click */
+  #wallBgOptions{ width:100%; box-sizing:border-box; padding: 8px 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; margin-top: 8px; }
+  #wallBgOptions .row{ grid-template-columns: 150px minmax(0,1fr); align-items: center; }
+  #wallBgOptions select, #wallBgOptions input[type="text"]{ width: 100%; }
+  #wallBgOptions label{ min-width:0; }
+
+
+#walletBgOptions{width:100%;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="grid">
+    <div class="card">
+      <h2><span>Unit Parameters</span><span class="badge">vNext8</span></h2>
+      <div class="body">
+
+        <div class="section-title">Primary Inputs</div>
+        <div class="row">
+          <label for="category">Category</label>
+          <select id="category"></select>
+        </div>
+        <div class="row">
+          <label for="config">Configuration</label>
+          <select id="config"></select>
+        </div>
+        <div class="row" id="bifoldCountRow" style="display:none">
+          <label for="bifoldCount">Bifold leaf count</label>
+          <select id="bifoldCount">
+            <option value="2">2 Door</option>
+            <option value="4" selected>4 Door</option>
+          </select>
+        </div>
+
+        <div class="section-title">Slab & Specs</div>
+
+        <div class="row">
+          <label for="slabW">Width (slab, in)</label>
+          <input id="slabW" type="number" step="1" min="10" value="36">
+        </div>
+
+        <div class="row">
+          <label for="slabH">Height (slab)</label>
+          <select id="slabH">
+            <option value="80" selected>80&quot; (6'8&quot;)</option>
+            <option value="96">96&quot; (8'0&quot;)</option>
+            <option value="84">84&quot; (7'0&quot;)</option>
+            <option value="100">100&quot; (8'4&quot;)</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label></label>
+          <label style="display:flex; align-items:center; gap:10px;">
+            <input type="checkbox" id="cutdownEnable"> Cutdown height
+          </label>
+        </div>
+
+        <div class="row" id="cutdownRow" style="display:none">
+          <label for="cutdownIn">Cutdown (in, from top)</label>
+          <input id="cutdownIn" type="number" step="0.01" min="0" value="0">
+        </div>
+
+        <div class="row">
+          <label for="slabT">Thickness</label>
+          <select id="slabT">
+            <option value="1.375">1-3/8&quot;</option>
+            <option value="1.75">1-3/4&quot;</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="series">Series</label>
+          <select id="series"></select>
+        </div>
+
+        <div class="row" id="styleRowText">
+          <label for="styleText">Style</label>
+          <input id="styleText" type="text" placeholder="e.g., Shaker 2-panel">
+        </div>
+        <div class="row" id="styleRowSelect" style="display:none">
+          <label for="styleSelect">Style</label>
+          <select id="styleSelect"></select>
+        </div>
+
+        <div class="row" id="familyRowText">
+          <label for="familyText">Family / Material</label>
+          <input id="familyText" type="text" placeholder="e.g., Molded / Clear Pine / Fiberglass">
+        </div>
+        <div class="row" id="familyRowSelect" style="display:none">
+          <label for="familySelect">Family / Material</label>
+          <select id="familySelect"></select>
+        </div>
+
+        <div class="row" id="coreRow">
+          <label for="core">Core</label>
+          <select id="core">
+            <option>Hollow</option>
+            <option>Solid</option>
+          </select>
+        </div>
+
+        <div class="section-title" id="slabMachTitle" style="display:none">Slab machining</div>
+        <div id="slabMachGroup" style="display:none">
+          <div class="row">
+            <label for="slabMach">Slab machining options</label>
+            <select id="slabMach">
+              <option value="NO">No</option>
+              <option value="YES" selected>Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title" id="opTitle">Operation & Prep</div>
+        <div class="row" id="handingRow">
+          <label for="handing">Handing</label>
+          <select id="handing"></select>
+        </div>
+        <div class="row" id="boreRow">
+          <label for="bore">Bore</label>
+          <select id="bore">
+            <option value="0">No Bore</option>
+            <option value="1" selected>Single Bore</option>
+            <option value="2">Double Bore</option>
+            <option value="3">Triple Bore</option>
+          </select>
+        </div>
+
+        <div class="section-title" id="frameTitle">Frame & Hinges</div>
+        <div class="row" id="frameThkRow">
+          <label for="frameThk">Frame thickness</label>
+          <select id="frameThk">
+            <option value="4.625">4-5/8&quot;</option>
+            <option value="6.625">6-5/8&quot;</option>
+            <option value="5.25">5-1/4&quot;</option>
+            <option value="4.875">4-7/8&quot;</option>
+            <option value="6.875">6-7/8&quot;</option>
+          </select>
+        </div>
+        <div class="row" id="frameMatRow">
+          <label for="frameMat">Frame material</label>
+          <select id="frameMat"></select>
+        </div>
+
+        <div class="row" id="hingePrepRow" style="display:none">
+          <label for="hingePrep">Hinge options</label>
+          <select id="hingePrep">
+            <option>No Hinge Prep</option>
+            <option>Hinge Cutout</option>
+            <option selected>Hinges installed</option>
+          </select>
+        </div>
+
+        <div class="row" id="hingeTypeRow">
+          <label for="hingeType">Hinge type</label>
+          <select id="hingeType">
+            <option>Standard</option>
+            <option>Non-Removable Pin Hinge</option>
+            <option>Ball-Bearing Hinge</option>
+            <option>Spring Hinge</option>
+          </select>
+        </div>
+        <div class="row" id="hingeFinishRow">
+          <label for="hingeFinish">Hinge finish / color</label>
+          <select id="hingeFinish">
+            <option>Flat Black</option>
+            <option>Oil Rub Bronze</option>
+            <option>Satin Nickel</option>
+            <option>Dull Brass</option>
+            <option>Bright Brass</option>
+            <option>Antique Nickel</option>
+            <option>Antique Brass</option>
+            <option>Bright Chrome</option>
+            <option>White Primed</option>
+          </select>
+        </div>
+
+        <div id="glassGroup">
+          <div class="section-title">Glass (Exterior only)</div>
+          <div class="row">
+            <label for="glassEnable">Include glass</label>
+            <select id="glassEnable">
+              <option value="NO" selected>No</option>
+              <option value="YES">Yes</option>
+            </select>
+          </div>
+          <div id="glassSection" style="display:none">
+            <div class="row">
+              <label>Glass image</label>
+              <div>
+                <div id="dropGlass" class="drop" tabindex="0" role="button">
+                  Drag & drop glass PNG here, or click to choose
+                  <button id="clearGlass" class="clear-btn" title="Remove glass image">×</button>
+                </div>
+                <input type="file" id="glassFile" accept="image/*" style="display:none">
+              </div>
+            </div>
+            <div class="row">
+              <label for="glassW">Glass width (in)</label>
+              <input id="glassW" type="number" step="0.01" value="22">
+            </div>
+            <div class="row">
+              <label for="glassH">Glass height (in)</label>
+              <input id="glassH" type="number" step="0.01" value="36">
+            </div>
+            <div class="row">
+              <label for="glassTop">Top offset (in)</label>
+              <input id="glassTop" type="number" step="0.01" value="10">
+            </div>
+            <div class="row">
+              <label for="glassDesc">Glass description</label>
+              <input id="glassDesc" type="text" placeholder="e.g., Half-lite Low-E, SDL 6-lite, etc.">
+            </div>
+          </div>
+        </div>
+
+        <div id="sillGroup">
+          <div class="section-title">Sill (Exterior/House-to-Garage)</div>
+          <div class="row">
+            <label for="sillType">Sill type</label>
+            <select id="sillType">
+              <option>Adjustable</option>
+              <option>Bumper</option>
+              <option>ADA</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="sillThk">Sill thickness</label>
+            <select id="sillThk">
+              <option>4-5/8&quot;</option>
+              <option>5-5/8&quot;</option>
+              <option>6-5/8&quot;</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="sillColor">Sill color</label>
+            <select id="sillColor">
+              <option value="MILL">Mill</option>
+              <option value="BRZ">Bronze</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">Details panel</div>
+        <div class="row">
+          <label for="includeDetails">Show details panel</label>
+          <select id="includeDetails">
+            <option value="NO" selected>No</option>
+            <option value="YES">Yes</option>
+          </select>
+        </div>
+        <div class="row">
+          <label for="detailsStyle">Details style</label>
+          <select id="detailsStyle">
+            <option value="TAGS" selected>Text tags (chips)</option>
+            <option value="BULLETS">Bullets</option>
+          </select>
+        </div>
+        <div id="detailsControlsWrap">
+<div class="row">
+          <label>Detail order (drag + arrows)</label>
+          <div class="order-box" id="orderBox"></div>
+        </div>
+        
+        <div class="section-title">Size lines</div>
+        <div class="row">
+          <label></label>
+          <div style="display:flex; flex-wrap:wrap; gap:12px;">
+            <label style="display:flex; gap:8px; align-items:center;"><input type="checkbox" id="sizeShowCall" checked> Call size</label>
+            <label style="display:flex; gap:8px; align-items:center;"><input type="checkbox" id="sizeShowDoor" checked> Door size</label>
+            <label style="display:flex; gap:8px; align-items:center;"><input type="checkbox" id="sizeShowUnit"> Unit size</label>
+            <label style="display:flex; gap:8px; align-items:center;"><input type="checkbox" id="sizeShowRO"> Rough opening</label>
+          </div>
+        </div>
+
+<div class="row">
+          <label for="tagScale">Tag size</label>
+          <div class="sliderRow">
+            <input id="tagScale" type="range" min="50" max="250" step="10" value="100">
+            <span class="mono" id="tagScaleVal">100%</span>
+          </div>
+        </div>
+        <div class="row">
+          <label></label>
+          <div class="hint">Auto-fit shrinks details when they would overflow the available panel space. Use the slider to bump size up/down.</div>
+</div>
+
+        </div>
+
+        <div class="section-title">SKU & Pricing (independent)</div>
+        <div class="row">
+          <label><input type="checkbox" id="showSKU"> Show SKU</label>
+          <input id="sku" type="text" placeholder="e.g., INT-3068-Single-LH-...">
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="showQty"> Show Qty</label>
+          <input id="qty" type="number" step="1" min="1" value="1">
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="showSale"> Show Sale Price</label>
+          <input id="priceSale" type="text" inputmode="decimal" placeholder="$0.00">
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="showRegular"> Show Regular Price</label>
+          <input id="priceRegular" type="text" inputmode="decimal" placeholder="$0.00">
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="showSavings"> Show Savings %</label>
+          <div class="hint">Savings is calculated from Sale vs Regular. (If either is blank, savings is hidden.)</div>
+        </div>
+
+        
+
+      </div>
+    </div>
+
+    <div class="rightStack">
+<div class="card">
+      <h2><span>Preview</span><span class="badge mono" id="previewBadge">—×—</span></h2>
+      <div class="preview-wrap">
+        <div class="preview-toolbar">
+  <button class="primary" id="fitBtn">Fit</button>
+  <span class="sp"></span>
+  <span class="mono" style="opacity:.85">Wheel/pinch to zoom • Drag to pan • Double-click reset</span>
+</div>
+<div class="preview-stage">
+          <canvas id="canvas" class="preview-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+<div class="card">
+      <h2><span>Slab Image</span><span class="badge">source</span></h2>
+      <div class="body">
+        <div class="section-title">Slab image</div>
+        <div class="row">
+          <label>Slab image</label>
+          <div>
+            <div id="dropSlab" class="drop" tabindex="0" role="button">
+              Drag/drop or click for custom slab override
+              <button id="clearSlab" class="clear-btn" title="Remove slab image">×</button>
+            </div>
+            <input type="file" id="slabFile" accept="image/*" style="display:none">
+            <div class="hint" style="margin-top:8px;">Transparent PNG works best. If no slab image is loaded, a placeholder is drawn.</div>
+          </div>
+        </div>
+
+            <div class="row" style="margin-top:10px;">
+              <label style="display:flex; align-items:center; gap:10px;">
+                <input type="checkbox" id="autoSlabEnable" checked> Auto slab image (GitHub)
+              </label>
+              
+            </div>
+            <div class="row">
+              <label for="autoSlabUrl">Auto slab URL</label>
+              <input id="autoSlabUrl" type="text" readonly>
+            </div>
+            <div class="row">
+              <label for="slabUrl">Custom slab URL</label>
+              <div style="display:flex; gap:10px; width:100%;">
+                <input id="slabUrl" type="text" placeholder="Paste image URL to override drag/drop and auto slab" style="flex:1;">
+                <button id="clearSlabOverride" class="small" style="white-space:nowrap;">Clear</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <label></label>
+              <button id="resetToAutoSlab" class="small">Reset slab to auto</button>
+            </div>
+
+
+        
+      </div>
+    </div>
+
+<div class="card">
+      <h2><span>Output</span><span class="badge">export</span></h2>
+      <div class="body">
+        <div class="section-title">Output</div>
+        <div class="row">
+          <label for="layout">Layout</label>
+          <select id="layout">
+            <option value="CANVAS" selected>Canvas (1:1 square)</option>
+            <option value="UNIT_ONLY">Unit only</option>
+            <option value="MARKETING_16x9">Marketing 16:9</option>
+          </select>
+        
+        <div class="section-title">Background</div>
+        <div class="row">
+          <select id="bgMode">
+            <option value="TRANSPARENT" selected>Transparent</option>
+            <option value="WHITE">White</option>
+            <option value="BLACK">Black</option>
+            <option value="WALL">Generated Wall</option>
+          </select>
+        </div>
+        <div id="wallBgOptions" style="display:none;">
+          <div class="row">
+            <label for="wallTone">Wall tone</label>
+            <select id="wallTone">
+              <option value="WARM" selected>Warm White</option>
+              <option value="COOL">Cool White</option>
+              <option value="GRAY">Light Gray</option>
+              <option value="SAGE">Sage</option>
+              <option value="SKY">Soft Blue</option>
+              <option value="SAND">Sand</option>
+              <option value="TAUPE">Taupe</option>
+            </select>
+          </div>
+          <div class="row">
+            <label></label>
+            <label style="display:flex; gap:10px; align-items:center; user-select:none;">
+              <input type="checkbox" id="wallShadow" checked> Soft shadow
+            </label>
+          </div>
+          <div class="row">
+            <label></label>
+            <label style="display:flex; gap:10px; align-items:center; user-select:none;">
+              <input type="checkbox" id="wallCasing" checked> Installed casing (2-1/4&quot;)
+            </label>
+          </div>
+          <div class="row">
+            <label></label>
+            <label style="display:flex; gap:10px; align-items:center; user-select:none;">
+              <input type="checkbox" id="wallHideFrame" checked> Hide frame/jamb (installed look)
+            </label>
+          </div>
+        </div>
+</div>
+<div class="row">
+          <label for="outName">Base name</label>
+          <input id="outName" type="text" placeholder="e.g., Interior_3068_Single_LH">
+        </div>
+        <div class="row">
+          <label for="ppi">PPI</label>
+          <input id="ppi" type="number" step="1" value="10">
+        </div>
+        <div class="row">
+  <label>Target width (px)</label>
+  <div style="display:flex; gap:10px; width:100%; align-items:flex-end;">
+    <input id="targetW" type="number" step="1" placeholder="Width (px)" style="flex:1;">
+    <input id="targetH" type="number" step="1" placeholder="Height (px)" style="flex:1;">
+  </div>
+</div>
+
+        <div class="btnrow">
+          <button class="primary" id="btnRender">Render Preview</button>
+          <button class="good" id="btnDownload">Download PNG</button>
+          <button class="warn" id="btnDownloadSet">Download Set (3 PNGs)</button>
+        </div>
+        <div class="row">
+          <label></label>
+          <button id="btnCopyClipboard" class="good">Copy Preview to Clipboard</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+  </div>
+</div>
+    
+
+<script>
+
+window.addEventListener('DOMContentLoaded', () => {
+(function(){
+  const SCHEMA = {
+    categories: ["Interior","Exterior","House-to-Garage"],
+    configsByCategory: {
+      "Interior": ["Slab","Single","Double","Bifold","Bypass"],
+      "Exterior": ["Slab","Single","Double"],
+      "House-to-Garage": ["Slab","Single"]
+    },
+    seriesByCategory: {
+      "Interior": ["Molded","MDF","Flush","Stile & Rail"],
+      "House-to-Garage": ["Molded","MDF","Flush","Stile & Rail"],
+      "Exterior": ["Fiberglass","Steel","Wood"]
+    },
+    moldedStyles: [
+      "Bayshore", "Birkdale", "Caiman", "Camden", "Carrara", "Cheyenne", "ColonistSM", "ColonistTXT", "Conmore", "Coventry", "Craftsman", "LincolnPark", "Logan", "Madison", "Monroe", "Riverside", "Rockport", "Roman", "SantaFe", "Winslow"
+    ],
+    mdfStyles: ["1P","2P","3P","3PC","5P","6P"],
+    flushFamilies: ["Birch","Hardboard SM","Hardboard TXT","Lauan","Red Oak"],
+    coreRequiredSeries: ["Molded","Flush"],
+    handingInterior: ["No Hand","LH","RH"],
+    handingExterior: ["No Hand","LHIS","RHIS","LHOS","RHOS"],
+    frameMaterialsByCategory: {
+      "Interior": ["FJ Pine","Primed FJ","Clear Pine","Knotty Alder"],
+      "Exterior": ["Primed Composite","Primed FJ","Clear Pine","Knotty Alder"],
+      "House-to-Garage": ["Primed Composite","Primed FJ","Clear Pine","Knotty Alder"]
+    },
+    detailsAll: [
+      {id:"config", label:"Config", sub:"Category + Configuration"},
+      {id:"size", label:"Size", sub:"Call / Door / Unit / R/O"},
+      {id:"hand", label:"Hand", sub:"Handing + Bore"},
+      {id:"material", label:"Material", sub:"Family + Thickness + Core"},
+      {id:"style", label:"Style", sub:"Door style"},
+      {id:"frame", label:"Frame", sub:"Thickness + Material"},
+      {id:"hinge", label:"Hinge", sub:"Finish + Type / Prep"},
+      {id:"glass", label:"Glass", sub:"Glass description"},
+      {id:"sill", label:"Sill", sub:"Thickness + Color + Type"}
+    ]
+  };
+
+  const BASE_SLAB_URL = "https://jhejl10.github.io/Doors";
+
+  const state = {
+    category: "Interior",
+    config: "Single",
+    bifoldLeaves: 4,
+
+    autoSlabEnable: true,
+    slabSource: "auto", // "auto" or "manual"
+
+    slabW: 36,
+    slabH: 80,
+    cutdownEnable:false,
+    cutdownIn:0,
+
+    slabT: 1.375,
+    series: "Molded",
+    style: "",
+    family: "",
+    core: "Hollow",
+
+    slabMach: "YES",
+    handing: "No Hand",
+    bore: 0,
+
+    frameThk: 4.625,
+    frameMat: "FJ Pine",
+
+    hingePrep: "Hinges installed",
+    hingeType: "Standard",
+    hingeFinish: "Flat Black",
+
+    glassEnable: false,
+    glassW: 22,
+    glassH: 36,
+    glassTop: 10,
+    glassDesc: "",
+
+    sillType: "Adjustable",
+    sillThkLabel: '4-5/8"',
+    sillColor: "MILL",
+
+    includeDetails: false,
+    detailsStyle: "TAGS",
+    detailOrder: ["config","size","hand","material","style","frame","hinge","sill","glass"],
+    detailEnabled: Object.fromEntries(SCHEMA.detailsAll.map(d=>[d.id, d.id!=="glass"])),
+    tagScalePct: 100,
+
+    showSKU: false,
+    showQty: false,
+    showSale: false,
+    showRegular: false,
+    showSavings: false,
+    sku: "",
+    qty: 1,
+    priceSaleText: "",
+    priceRegularText: "",
+
+    layout: "CANVAS",
+    outName: "",
+    ppi: 10,
+    targetW: null,
+    targetH: null,
+
+    bgMode: "TRANSPARENT",
+    wallTone: "WARM",
+    wallShadow: true,
+    wallCasing: true,
+    wallHideFrame: true,
+
+    sizeShowCall: true,
+    sizeShowDoor: true,
+    sizeShowUnit: false,
+    sizeShowRO: false,
+
+    bgMode: "TRANSPARENT",
+    wallTone: "WARM",
+    wallShadow: true,
+    wallCasing: true,
+    wallHideFrame: true,
+
+    sizeShowCall: true,
+    sizeShowDoor: true,
+    sizeShowUnit: false,
+    sizeShowRO: false,
+  };
+
+  const images = { slab:null, slabDrag:null, slabUrl:null, slabAuto:null, glass:null };
+
+  const slabCache = new Map(); // url -> HTMLImageElement
+
+  function getAutoSlabUrl(){
+    // Auto slab uses the SINGLE leaf call size (slab width/height), not multiplied for configs.
+    const call = callCode4FromTotal(state.slabW, state.slabH);
+    let folder = null;
+
+    if(state.series === "Molded") folder = `Molded/${state.style}`;
+    else if(state.series === "MDF") folder = `MDF/${state.style}`;
+    else if(state.series === "Flush") folder = `Flush/${state.family}`;
+    else return null;
+
+    return `${BASE_SLAB_URL}/${folder}/${call}.png`;
+  }
+
+  function shouldUseAutoSlab(){
+    if(!state.autoSlabEnable) return false;
+    return (state.series === "Molded" || state.series === "MDF" || state.series === "Flush");
+  }
+
+  function refreshSlabPriority(){
+    // Priority: custom URL > drag/drop image > auto slab URL
+    images.slab = images.slabUrl || images.slabDrag || images.slabAuto || null;
+  }
+
+  function setSlabManual(img){
+    images.slabDrag = img;
+    state.slabSource = img ? "manual" : (shouldUseAutoSlab() ? "auto" : "manual");
+    refreshSlabPriority();
+  }
+
+  function loadImageFromUrl(url){
+    if(!url) return Promise.reject(new Error("No URL"));
+    if(slabCache.has(url)) return Promise.resolve(slabCache.get(url));
+    return new Promise((resolve, reject)=>{
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = ()=>{ slabCache.set(url, img); resolve(img); };
+      img.onerror = ()=> reject(new Error("Image load failed"));
+      img.src = url;
+    });
+  }
+
+  let lastCustomSlabUrl = "";
+  let slabUrlTimer = null;
+  function handleCustomSlabUrlInput(){
+    const clean = (el.slabUrl && el.slabUrl.value ? el.slabUrl.value.trim() : "");
+
+    if(!clean){
+      lastCustomSlabUrl = "";
+      images.slabUrl = null;
+      refreshSlabPriority();
+      maybeLoadAutoSlab();
+      renderAll();
+      return;
+    }
+
+    if(clean === lastCustomSlabUrl && images.slabUrl){
+      refreshSlabPriority();
+      renderAll();
+      return;
+    }
+
+    lastCustomSlabUrl = clean;
+    loadImageFromUrl(clean)
+      .then(img=>{
+        images.slabUrl = img;
+        state.slabSource = "url";
+        refreshSlabPriority();
+        renderAll();
+      })
+      .catch(()=>{
+        images.slabUrl = null;
+        refreshSlabPriority();
+        renderAll();
+      });
+  }
+
+  let lastAutoUrl = null;
+  function maybeLoadAutoSlab(){
+    const url = shouldUseAutoSlab() ? getAutoSlabUrl() : null;
+    if(el.autoSlabUrl) el.autoSlabUrl.value = url || "";
+    if(!shouldUseAutoSlab()) return;
+
+    if(url && url !== lastAutoUrl){
+      lastAutoUrl = url;
+      loadImageFromUrl(url)
+        .then(img => { images.slabAuto = img; refreshSlabPriority(); if(!images.slabUrl && !images.slabDrag) state.slabSource = "auto"; renderAll(); })
+        .catch(() => {
+          // Fallback: try default.png within the same style/folder
+          try{
+            const fallback = url.replace(/\/[^\/]+\.png$/i, "/default.png");
+            if(fallback && fallback !== url){
+              loadImageFromUrl(fallback)
+                .then(img2 => { images.slabAuto = img2; refreshSlabPriority(); if(!images.slabUrl && !images.slabDrag) state.slabSource = "auto"; renderAll(); })
+                .catch(() => { /* final fallback: placeholder */ });
+            }
+          }catch(e){ /* ignore */ }
+        });
+    }
+  }
+
+
+  const $ = (sel)=>document.querySelector(sel);
+  const el = {
+    category: $("#category"),
+    config: $("#config"),
+    bifoldCountRow: $("#bifoldCountRow"),
+    bifoldCount: $("#bifoldCount"),
+    dropSlab: $("#dropSlab"),
+    slabFile: $("#slabFile"),
+    clearSlab: $("#clearSlab"),
+    autoSlabEnable: $("#autoSlabEnable"),
+    autoSlabUrl: $("#autoSlabUrl"),
+    resetToAutoSlab: $("#resetToAutoSlab"),
+    slabUrl: $("#slabUrl"),
+    clearSlabOverride: $("#clearSlabOverride"),
+    slabW: $("#slabW"),
+    slabH: $("#slabH"),
+    callHLabel: $("#callHLabel"),
+    cutdownEnable: $("#cutdownEnable"),
+    cutdownRow: $("#cutdownRow"),
+    cutdownIn: $("#cutdownIn"),
+    slabT: $("#slabT"),
+    series: $("#series"),
+    styleRowText: $("#styleRowText"),
+    styleText: $("#styleText"),
+    styleRowSelect: $("#styleRowSelect"),
+    styleSelect: $("#styleSelect"),
+    familyRowText: $("#familyRowText"),
+    familyText: $("#familyText"),
+    familyRowSelect: $("#familyRowSelect"),
+    familySelect: $("#familySelect"),
+    coreRow: $("#coreRow"),
+    core: $("#core"),
+    slabMachTitle: $("#slabMachTitle"),
+    slabMachGroup: $("#slabMachGroup"),
+    slabMach: $("#slabMach"),
+    opTitle: $("#opTitle"),
+    handingRow: $("#handingRow"),
+    handing: $("#handing"),
+    boreRow: $("#boreRow"),
+    bore: $("#bore"),
+    frameTitle: $("#frameTitle"),
+    frameThkRow: $("#frameThkRow"),
+    frameThk: $("#frameThk"),
+    frameMatRow: $("#frameMatRow"),
+    frameMat: $("#frameMat"),
+    hingePrepRow: $("#hingePrepRow"),
+    hingePrep: $("#hingePrep"),
+    hingeTypeRow: $("#hingeTypeRow"),
+    hingeType: $("#hingeType"),
+    hingeFinishRow: $("#hingeFinishRow"),
+    hingeFinish: $("#hingeFinish"),
+    glassGroup: $("#glassGroup"),
+    glassEnable: $("#glassEnable"),
+    glassSection: $("#glassSection"),
+    dropGlass: $("#dropGlass"),
+    glassFile: $("#glassFile"),
+    clearGlass: $("#clearGlass"),
+    glassW: $("#glassW"),
+    glassH: $("#glassH"),
+    glassTop: $("#glassTop"),
+    glassDesc: $("#glassDesc"),
+    sillGroup: $("#sillGroup"),
+    sillType: $("#sillType"),
+    sillThk: $("#sillThk"),
+    sillColor: $("#sillColor"),
+    includeDetails: $("#includeDetails"),
+    detailsStyle: $("#detailsStyle"),
+    orderBox: $("#orderBox"),
+    tagScale: $("#tagScale"),
+    tagScaleVal: $("#tagScaleVal"),
+
+    showSKU: $("#showSKU"),
+    showQty: $("#showQty"),
+    showSale: $("#showSale"),
+    showRegular: $("#showRegular"),
+    showSavings: $("#showSavings"),
+    sku: $("#sku"),
+    qty: $("#qty"),
+    priceSale: $("#priceSale"),
+    priceRegular: $("#priceRegular"),
+
+    layout: $("#layout"),
+    bgMode: $("#bgMode"),
+    wallBgOptions: $("#wallBgOptions"),
+    wallTone: $("#wallTone"),
+    wallShadow: $("#wallShadow"),
+    wallCasing: $("#wallCasing"),
+    wallHideFrame: $("#wallHideFrame"),
+    sizeShowCall: $("#sizeShowCall"),
+    sizeShowDoor: $("#sizeShowDoor"),
+    sizeShowUnit: $("#sizeShowUnit"),
+    sizeShowRO: $("#sizeShowRO"),
+    outName: $("#outName"),
+    ppi: $("#ppi"),
+    targetW: $("#targetW"),
+    targetH: $("#targetH"),
+    btnRender: $("#btnRender"),
+    btnDownload: $("#btnDownload"),
+    btnDownloadSet: $("#btnDownloadSet"),
+    canvas: $("#canvas"),
+    fitBtn: $("#fitBtn"),
+  };
+
+  function setOptions(selectEl, values, selected){
+    selectEl.innerHTML = "";
+    for(const v of values){
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      if(v === selected) opt.selected = true;
+      selectEl.appendChild(opt);
+    }
+  }
+
+  const isInterior=()=>state.category==="Interior";
+  const isExterior=()=>state.category==="Exterior";
+  const isHTG=()=>state.category==="House-to-Garage";
+  const isSlab=()=>state.config==="Slab";
+  const isDouble=()=>state.config==="Double";
+  const isBifold=()=>state.config==="Bifold";
+  const isBypass=()=>state.config==="Bypass";
+  const isExtOrHTG=()=>!isInterior();
+
+  function leavesCount(){
+    if(isDouble()) return 2;
+    if(isBifold()) return state.bifoldLeaves;
+    if(isBypass()) return 2;
+    return 1;
+  }
+
+  function hasHandingBore(){
+    if(isBifold() || isBypass()) return false;
+    if(isSlab() && state.slabMach !== "YES") return false;
+    return true;
+  }
+  function hasFrameAndHinges(){
+    if(isBypass()) return false;
+    if(isSlab() && state.slabMach !== "YES") return false;
+    return true;
+  }
+  function getHandingOptions(){
+    return isInterior() ? SCHEMA.handingInterior : SCHEMA.handingExterior;
+  }
+
+  function parseMoney(text){
+    if(text==null) return null;
+    const t = String(text).trim();
+    if(!t) return null;
+    const cleaned = t.replace(/[^0-9.\-]/g,'');
+    if(!cleaned) return null;
+    const n = parseFloat(cleaned);
+    return isFinite(n) ? n : null;
+  }
+  function fmtMoney(n){
+    if(n==null || !isFinite(+n)) return null;
+    return (+n).toLocaleString(undefined,{style:"currency", currency:"USD"});
+  }
+  function savingsPct(sale, reg){
+    if(sale==null || reg==null || !isFinite(sale) || !isFinite(reg) || reg<=0) return null;
+    const pct = (1 - sale/reg)*100;
+    if(!isFinite(pct)) return null;
+    return Math.round(pct);
+  }
+
+  const gcd=(a,b)=>b?gcd(b,a%b):a;
+  const in2px=(v,ppi)=>Math.round(v*ppi);
+  function inchStr(x,den=16){
+    const whole=Math.floor(+x);
+    const frac=Math.round((+x-whole)*den);
+    if(frac===0) return `${whole}″`;
+    const g=gcd(frac,den);
+    return whole?`${whole}-${frac/g}/${den/g}″`:`${frac/g}/${den/g}″`;
+  }
+  function feetIn(inches){
+    const ft=Math.floor(inches/12);
+    const rem=Math.round(inches-ft*12);
+    return {ft,rem};
+  }
+  function callCode4FromTotal(totalWIn, totalHIn){
+    const w=feetIn(totalWIn), h=feetIn(totalHIn);
+    return `${w.ft}${w.rem}${h.ft}${h.rem}`;
+  }
+  function callHeightCode2(heightIn){
+    const h=feetIn(heightIn);
+    return `${h.ft}${h.rem}`;
+  }
+  function frameColorsByMat(mat){
+    const m=(mat||'').toLowerCase();
+    if(m.includes('primed fj')) return {fill:'#f0f7fa',edge:'#c8d9df'};
+    if(m.includes('fj pine')) return {fill:'#EDCAA1',edge:'#d3b785'};
+    if(m.includes('clear pine')) return {fill:'#FBE3BF',edge:'#e2caa6'};
+    if(m.includes('knotty alder')) return {fill:'#C79A6A',edge:'#a78359'};
+    if(m.includes('primed composite')) return {fill:'#e9f1f5',edge:'#cbd8df'};
+    return {fill:'#ddd',edge:'#bbb'};
+  }
+  function thresholdColors(code){
+    const c=(code||'MILL').toUpperCase();
+    return (c==='BRZ')?{fill:'#5a4633',edge:'#3b2f24'}:{fill:'#c8cbd1',edge:'#9aa3ad'};
+  }
+  function boreSide(hand){
+    const h=(hand||'').toUpperCase().trim();
+    if(h==='LH'||h==='LHIS'||h==='RHOS') return 'RIGHT';
+    if(h==='RH'||h==='RHIS'||h==='LHOS') return 'LEFT';
+    return 'RIGHT';
+  }
+  function fillCircle(ctx,cx,cy,r,color='#000'){
+    ctx.fillStyle=color;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.closePath(); ctx.fill();
+  }
+
+  
+  function drawCasing(ctx, unitW, topH, casingPx, color="#f6f5f1"){
+    // Simple 2-1/4" rectangular casing: left, right, top
+    ctx.save();
+    // slight shadow for realism
+    ctx.shadowColor = "rgba(0,0,0,0.25)";
+    ctx.shadowBlur = Math.max(2, Math.round(casingPx*0.25));
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = Math.max(1, Math.round(casingPx*0.15));
+
+    ctx.fillStyle = color;
+    // left
+    ctx.fillRect(0, 0, casingPx, topH);
+    // right
+    ctx.fillRect(unitW - casingPx, 0, casingPx, topH);
+    // top
+    ctx.fillRect(0, 0, unitW, casingPx);
+
+    // clean inner edge line (reveal)
+    ctx.shadowColor="transparent";
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
+    ctx.fillRect(casingPx, casingPx, unitW - 2*casingPx, 1);
+    ctx.fillRect(casingPx, casingPx, 1, topH - casingPx);
+    ctx.fillRect(unitW - casingPx - 1, casingPx, 1, topH - casingPx);
+
+    ctx.restore();
+  }
+
+function drawFrame(ctx, opening, framePx, colors, extendDownPx=0){
+    const {x,y,w,h}=opening;
+    ctx.fillStyle=colors.fill;
+    ctx.fillRect(x - framePx, y - framePx, w + 2*framePx, framePx);
+    ctx.fillRect(x - framePx, y - framePx, framePx, h + framePx + extendDownPx);
+    ctx.fillRect(x + w, y - framePx, framePx, h + framePx + extendDownPx);
+
+    ctx.strokeStyle=colors.edge; ctx.lineWidth=1.6;
+    ctx.strokeRect(x - framePx + .5, y - framePx + .5, w + 2*framePx -1, framePx -1);
+    ctx.strokeRect(x - framePx + .5, y - framePx + .5, framePx -1, h + framePx + extendDownPx -1);
+    ctx.strokeRect(x + w + .5, y - framePx + .5, framePx -1, h + framePx + extendDownPx -1);
+  }
+  function drawThreshold(ctx, openingRect, framePx, thPx, colors, hasFrame){
+    const x = hasFrame ? (openingRect.x - framePx) : openingRect.x;
+    const w = hasFrame ? (openingRect.w + 2*framePx) : openingRect.w;
+    const y = openingRect.y + openingRect.h;
+    ctx.fillStyle=colors.fill;
+    ctx.fillRect(x, y, w, thPx);
+    ctx.strokeStyle=colors.edge; ctx.lineWidth=1.2;
+    ctx.strokeRect(x+.5, y+.5, w-1, thPx-1);
+  }
+  function drawGlass(ctx, rect, p){
+    const gw=in2px(p.wIn,p.ppi), gh=in2px(p.hIn,p.ppi);
+    const top=rect.y + in2px(p.topIn,p.ppi);
+    const left=rect.x + Math.round((rect.w - gw)/2);
+    if(images.glass){
+      ctx.drawImage(images.glass, 0,0,images.glass.naturalWidth, images.glass.naturalHeight, left, top, gw, gh);
+    } else {
+      ctx.fillStyle='rgba(120,185,255,0.35)';
+      ctx.fillRect(left,top,gw,gh);
+      ctx.strokeStyle='#7db8ff'; ctx.lineWidth=1.5;
+      ctx.strokeRect(left+.5,top+.5,gw-1,gh-1);
+    }
+  }
+
+  function enforceValidState(){
+    const allowedCfg = SCHEMA.configsByCategory[state.category];
+    if(!allowedCfg.includes(state.config)) state.config = allowedCfg[0] || "Single";
+
+    const allowedSeries = SCHEMA.seriesByCategory[state.category];
+    if(!allowedSeries.includes(state.series)) state.series = allowedSeries[0];
+
+    if(!SCHEMA.coreRequiredSeries.includes(state.series)) state.core = "";
+    const mats = SCHEMA.frameMaterialsByCategory[state.category];
+    if(!mats.includes(state.frameMat)) state.frameMat = mats[0];
+
+    const hands = getHandingOptions();
+    if(!hands.includes(state.handing)) state.handing = hands[0];
+
+    if(state.series === "Molded"){
+      state.family = "Molded";
+      if(!SCHEMA.moldedStyles.includes(state.style)){
+        state.style = SCHEMA.moldedStyles.includes("Monroe") ? "Monroe" : SCHEMA.moldedStyles[0];
+      }
+    } else if(state.series === "MDF"){
+      state.family = "MDF";
+      if(!SCHEMA.mdfStyles.includes(state.style)) state.style = SCHEMA.mdfStyles[0];
+    } else if(state.series === "Flush"){
+      state.style = "Flush";
+      if(!SCHEMA.flushFamilies.includes(state.family)) state.family = SCHEMA.flushFamilies[0];
+    }
+
+    if(!isExterior()) state.glassEnable = false;
+    if(![2,4].includes(state.bifoldLeaves)) state.bifoldLeaves = 4;
+    state.ppi = Math.max(4, Math.round(+state.ppi || 10));
+    state.tagScalePct = Math.min(160, Math.max(60, Math.round(+state.tagScalePct || 100)));
+    state.slabW = Math.round(+state.slabW || 0);
+    state.slabH = Math.round(+state.slabH || 80);
+    if(![80,84,96,100].includes(state.slabH)) state.slabH = 80;
+    if(!state.cutdownEnable) state.cutdownIn = 0;
+    if(state.cutdownIn < 0) state.cutdownIn = 0;
+    if(state.cutdownIn > state.slabH-1) state.cutdownIn = Math.max(0, state.slabH-1);
+    state.qty = Math.max(1, Math.round(+state.qty || 1));
+  }
+
+  function syncStyleFamilyUI(){
+    if(state.series === "Molded"){
+      el.styleRowText.style.display = "none";
+      el.styleRowSelect.style.display = "";
+      setOptions(el.styleSelect, SCHEMA.moldedStyles, state.style);
+
+      el.familyRowText.style.display = "none";
+      el.familyRowSelect.style.display = "";
+      setOptions(el.familySelect, ["Molded"], "Molded");
+      el.familySelect.disabled = true;
+    }
+    else if(state.series === "MDF"){
+      state.family = "MDF";
+      // Style = MDF folder name
+      el.styleRowText.style.display = "none";
+      el.styleRowSelect.style.display = "";
+      setOptions(el.styleSelect, SCHEMA.mdfStyles, state.style);
+
+      el.familyRowText.style.display = "none";
+      el.familyRowSelect.style.display = "";
+      setOptions(el.familySelect, ["MDF"], "MDF");
+      el.familySelect.disabled = true;
+    }
+    else if(state.series === "Flush"){
+      el.styleRowSelect.style.display = "none";
+      el.styleRowText.style.display = "";
+      el.styleText.value = "Flush";
+      el.styleText.disabled = true;
+
+      el.familyRowText.style.display = "none";
+      el.familyRowSelect.style.display = "";
+      setOptions(el.familySelect, SCHEMA.flushFamilies, state.family);
+      el.familySelect.disabled = false;
+    } else {
+      el.styleRowSelect.style.display = "none";
+      el.styleRowText.style.display = "";
+      el.styleText.disabled = false;
+
+      el.familyRowSelect.style.display = "none";
+      el.familyRowText.style.display = "";
+      el.familyText.disabled = false;
+    }
+  }
+
+  function renderOrderUI(){
+    el.orderBox.innerHTML = "";
+    for(let i=0;i<state.detailOrder.length;i++){
+      const id = state.detailOrder[i];
+      const def = SCHEMA.detailsAll.find(d=>d.id===id);
+      if(!def) continue;
+
+      const item = document.createElement("div");
+      item.className="order-item";
+      item.draggable = true;
+      item.dataset.id = id;
+
+      item.addEventListener("dragstart", (e)=>{
+        item.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", id);
+      });
+      item.addEventListener("dragend", ()=>{
+        item.classList.remove("dragging");
+        Array.from(el.orderBox.querySelectorAll(".order-item")).forEach(n=>n.classList.remove("over"));
+      });
+      item.addEventListener("dragover", (e)=>{
+        e.preventDefault();
+        item.classList.add("over");
+        e.dataTransfer.dropEffect = "move";
+      });
+      item.addEventListener("dragleave", ()=> item.classList.remove("over"));
+      item.addEventListener("drop", (e)=>{
+        e.preventDefault();
+        item.classList.remove("over");
+        const from = e.dataTransfer.getData("text/plain");
+        const to = id;
+        if(!from || !to || from===to) return;
+        const arr = state.detailOrder.slice();
+        const fi = arr.indexOf(from), ti = arr.indexOf(to);
+        if(fi<0 || ti<0) return;
+        arr.splice(fi,1);
+        arr.splice(ti,0,from);
+        state.detailOrder = arr;
+  if(el.slabUrl){
+    el.slabUrl.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        loadManualSlabFromUrl(el.slabUrl.value);
+      }
+    });
+  }
+
+
+  if(el.slabUrl){
+    el.slabUrl.addEventListener("input", ()=>{
+      clearTimeout(slabUrlTimer);
+      slabUrlTimer = setTimeout(handleCustomSlabUrlInput, 350);
+    });
+    el.slabUrl.addEventListener("change", handleCustomSlabUrlInput);
+  }
+  if(el.clearSlabOverride){
+    el.clearSlabOverride.addEventListener("click", (e)=>{
+      e.preventDefault();
+      if(el.slabUrl) el.slabUrl.value = "";
+      lastCustomSlabUrl = "";
+      images.slabUrl = null;
+      refreshSlabPriority();
+      maybeLoadAutoSlab();
+      renderAll();
+    });
+  }
+
+renderOrderUI();
+      });
+
+      const left = document.createElement("div");
+      left.className="order-left";
+
+      const grip = document.createElement("span");
+      grip.className="grip";
+      grip.textContent="⋮⋮";
+      grip.title="Drag to reorder";
+
+      const cb = document.createElement("input");
+      cb.type="checkbox";
+      cb.checked = !!state.detailEnabled[id];
+      cb.addEventListener("change", ()=>{ state.detailEnabled[id]=cb.checked; renderAll(); });
+
+      const labWrap = document.createElement("div");
+      labWrap.style.minWidth="0";
+      const b = document.createElement("b"); b.textContent = def.label;
+      const s = document.createElement("span"); s.textContent = def.sub;
+      labWrap.appendChild(b);
+      labWrap.appendChild(document.createElement("br"));
+      labWrap.appendChild(s);
+
+      left.appendChild(grip);
+      left.appendChild(cb);
+      left.appendChild(labWrap);
+
+      const act = document.createElement("div");
+      act.className="order-actions";
+
+      const up = document.createElement("button"); up.className="small"; up.textContent="↑";
+      up.disabled = i===0;
+      up.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        const t = state.detailOrder[i-1];
+        state.detailOrder[i-1]=state.detailOrder[i];
+        state.detailOrder[i]=t;
+        renderOrderUI(); renderAll();
+      });
+
+      const dn = document.createElement("button"); dn.className="small"; dn.textContent="↓";
+      dn.disabled = i===state.detailOrder.length-1;
+      dn.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        const t = state.detailOrder[i+1];
+        state.detailOrder[i+1]=state.detailOrder[i];
+        state.detailOrder[i]=t;
+        renderOrderUI(); renderAll();
+      });
+
+      act.appendChild(up); act.appendChild(dn);
+
+      item.appendChild(left); item.appendChild(act);
+      el.orderBox.appendChild(item);
+    }
+  }
+
+  function syncUIFromState(){
+    setOptions(el.category, SCHEMA.categories, state.category);
+    setOptions(el.config, SCHEMA.configsByCategory[state.category], state.config);
+    setOptions(el.series, SCHEMA.seriesByCategory[state.category], state.series);
+    setOptions(el.frameMat, SCHEMA.frameMaterialsByCategory[state.category], state.frameMat);
+    setOptions(el.handing, getHandingOptions(), state.handing);
+
+    if(el.autoSlabEnable) el.autoSlabEnable.checked = !!state.autoSlabEnable;
+    if(el.autoSlabUrl) el.autoSlabUrl.value = shouldUseAutoSlab() ? (getAutoSlabUrl() || "") : "";
+
+    el.bifoldCount.value = String(state.bifoldLeaves);
+
+    el.slabW.value = state.slabW;
+    el.slabH.value = String(state.slabH);
+    if(el.callHLabel) el.callHLabel.textContent = callHeightCode2(state.slabH - (state.cutdownEnable ? state.cutdownIn : 0));
+    el.cutdownEnable.checked = !!state.cutdownEnable;
+    el.cutdownRow.style.display = state.cutdownEnable ? "" : "none";
+    el.cutdownIn.value = state.cutdownIn;
+
+    el.slabT.value = String(state.slabT);
+
+    syncStyleFamilyUI();
+    if(el.styleRowText.style.display !== "none") el.styleText.value = state.style || "";
+    if(el.familyRowText.style.display !== "none") el.familyText.value = state.family || "";
+
+    el.core.value = state.core || "Hollow";
+    el.bore.value = String(state.bore);
+    el.frameThk.value = String(state.frameThk);
+    el.hingePrep.value = state.hingePrep;
+    el.hingeType.value = state.hingeType;
+    el.hingeFinish.value = state.hingeFinish;
+
+    el.glassEnable.value = state.glassEnable ? "YES" : "NO";
+    el.glassW.value = state.glassW;
+    el.glassH.value = state.glassH;
+    el.glassTop.value = state.glassTop;
+    el.glassDesc.value = state.glassDesc || "";
+
+    el.sillType.value = state.sillType;
+    el.sillThk.value = state.sillThkLabel;
+    el.sillColor.value = state.sillColor;
+
+    el.includeDetails.value = state.includeDetails ? "YES" : "NO";
+    el.detailsStyle.value = state.detailsStyle;
+    el.tagScale.value = String(state.tagScalePct);
+    el.tagScaleVal.textContent = `${state.tagScalePct}%`;
+
+    el.showSKU.checked = !!state.showSKU;
+    el.showQty.checked = !!state.showQty;
+    el.showSale.checked = !!state.showSale;
+    el.showRegular.checked = !!state.showRegular;
+    el.showSavings.checked = !!state.showSavings;
+    el.sku.value = state.sku || "";
+    el.qty.value = String(state.qty || 1);
+    el.priceSale.value = state.priceSaleText || "";
+    el.priceRegular.value = state.priceRegularText || "";
+
+    el.layout.value = state.layout;
+    if(el.bgMode) el.bgMode.value = state.bgMode || "TRANSPARENT";
+    if(el.wallTone) el.wallTone.value = state.wallTone || "WARM";
+    if(el.wallShadow) el.wallShadow.checked = !!state.wallShadow;
+    if(el.wallCasing) el.wallCasing.checked = !!state.wallCasing;
+    if(el.wallHideFrame) el.wallHideFrame.checked = !!state.wallHideFrame;
+    if(el.wallBgOptions) el.wallBgOptions.style.display = (state.bgMode==="WALL") ? "" : "none";
+
+    el.outName.value = state.outName || "";
+    el.ppi.value = String(state.ppi);
+    el.targetW.value = state.targetW ?? "";
+    if(el.targetH) el.targetH.value = state.targetH ?? "";
+el.bifoldCountRow.style.display = (state.config==="Bifold") ? "" : "none";
+    el.coreRow.style.display = SCHEMA.coreRequiredSeries.includes(state.series) ? "" : "none";
+
+    el.slabMachTitle.style.display = (state.config==="Slab") ? "" : "none";
+    el.slabMachGroup.style.display = (state.config==="Slab") ? "" : "none";
+    el.slabMach.value = state.slabMach;
+
+    el.glassGroup.style.display = (state.category==="Exterior") ? "" : "none";
+    el.glassSection.style.display = (state.category==="Exterior" && state.glassEnable) ? "" : "none";
+
+    el.sillGroup.style.display = (state.category==="Interior") ? "none" : "";
+
+    const showHB = hasHandingBore();
+    el.opTitle.style.display = showHB ? "" : "none";
+    el.handingRow.style.display = showHB ? "" : "none";
+    el.boreRow.style.display = showHB ? "" : "none";
+
+    const showFH = hasFrameAndHinges();
+    el.frameTitle.style.display = showFH ? "" : "none";
+    el.frameThkRow.style.display = showFH ? "" : "none";
+    el.frameMatRow.style.display = showFH ? "" : "none";
+
+    el.hingePrepRow.style.display = (state.config==="Slab" && state.slabMach==="YES") ? "" : "none";
+    const showTypeFinish = showFH && (state.config!=="Slab" || (state.slabMach==="YES" && state.hingePrep==="Hinges installed"));
+    el.hingeTypeRow.style.display = showTypeFinish ? "" : "none";
+    el.hingeFinishRow.style.display = showTypeFinish ? "" : "none";
+  }
+
+  function updateStateFromUI(){
+    state.category = el.category.value;
+    state.config = el.config.value;
+    state.bifoldLeaves = parseInt(el.bifoldCount.value,10) || 4;
+
+    state.autoSlabEnable = el.autoSlabEnable ? !!el.autoSlabEnable.checked : true;
+    if(!state.autoSlabEnable && state.slabSource==="auto"){ images.slab = null; }
+
+    state.slabW = parseInt(el.slabW.value,10) || 0;
+    state.slabH = parseInt(el.slabH.value,10) || 80;
+    state.cutdownEnable = !!el.cutdownEnable.checked;
+    state.cutdownIn = parseFloat(el.cutdownIn.value) || 0;
+
+    state.slabT = parseFloat(el.slabT.value) || 1.375;
+    state.series = el.series.value;
+
+    if(state.series === "Molded"){
+      state.family = "Molded";
+      state.style = el.styleSelect.value || SCHEMA.moldedStyles[0];
+    } else if(state.series === "MDF"){
+      state.family = "MDF";
+      state.style = el.styleSelect.value || SCHEMA.mdfStyles[0];
+    } else if(state.series === "Flush"){
+      state.style = "Flush";
+      state.family = el.familySelect.value || SCHEMA.flushFamilies[0];
+    } else {
+      state.style = el.styleText.value || "";
+      state.family = el.familyText.value || "";
+    }
+
+    state.core = (SCHEMA.coreRequiredSeries.includes(state.series)) ? (el.core.value || "") : "";
+    state.slabMach = el.slabMach.value || "YES";
+    state.handing = el.handing.value;
+    state.bore = parseInt(el.bore.value,10) || 0;
+
+    state.frameThk = parseFloat(el.frameThk.value) || 4.625;
+    state.frameMat = el.frameMat.value;
+
+    state.hingePrep = el.hingePrep.value;
+    state.hingeType = el.hingeType.value;
+    state.hingeFinish = el.hingeFinish.value;
+
+    state.glassEnable = (el.glassEnable.value === "YES");
+    state.glassW = parseFloat(el.glassW.value) || 0;
+    state.glassH = parseFloat(el.glassH.value) || 0;
+    state.glassTop = parseFloat(el.glassTop.value) || 0;
+    state.glassDesc = el.glassDesc.value || "";
+
+    state.sillType = el.sillType.value;
+    state.sillThkLabel = el.sillThk.value;
+    state.sillColor = el.sillColor.value;
+
+    state.includeDetails = (el.includeDetails.value === "YES");
+    state.detailsStyle = el.detailsStyle.value;
+    state.tagScalePct = parseInt(el.tagScale.value,10) || 100;
+
+    state.showSKU = el.showSKU.checked;
+    state.showQty = el.showQty.checked;
+    state.showSale = el.showSale.checked;
+    state.showRegular = el.showRegular.checked;
+    state.showSavings = el.showSavings.checked;
+    state.sku = el.sku.value || "";
+    state.qty = parseInt(el.qty.value,10) || 1;
+    state.priceSaleText = el.priceSale.value || "";
+    state.priceRegularText = el.priceRegular.value || "";
+
+    state.layout = el.layout.value;
+    state.bgMode = el.bgMode ? el.bgMode.value : (state.bgMode||"TRANSPARENT");
+    state.wallTone = el.wallTone ? el.wallTone.value : (state.wallTone||"WARM");
+    state.wallShadow = el.wallShadow ? !!el.wallShadow.checked : !!state.wallShadow;
+    state.wallCasing = el.wallCasing ? !!el.wallCasing.checked : !!state.wallCasing;
+    state.wallHideFrame = el.wallHideFrame ? !!el.wallHideFrame.checked : !!state.wallHideFrame;
+
+    state.sizeShowCall = el.sizeShowCall ? !!el.sizeShowCall.checked : !!state.sizeShowCall;
+    state.sizeShowDoor = el.sizeShowDoor ? !!el.sizeShowDoor.checked : !!state.sizeShowDoor;
+    state.sizeShowUnit = el.sizeShowUnit ? !!el.sizeShowUnit.checked : !!state.sizeShowUnit;
+    state.sizeShowRO   = el.sizeShowRO   ? !!el.sizeShowRO.checked   : !!state.sizeShowRO;
+
+    state.sizeShowCall = el.sizeShowCall ? !!el.sizeShowCall.checked : !!state.sizeShowCall;
+    state.sizeShowDoor = el.sizeShowDoor ? !!el.sizeShowDoor.checked : !!state.sizeShowDoor;
+    state.sizeShowUnit = el.sizeShowUnit ? !!el.sizeShowUnit.checked : !!state.sizeShowUnit;
+    state.sizeShowRO   = el.sizeShowRO   ? !!el.sizeShowRO.checked   : !!state.sizeShowRO;
+
+    state.outName = el.outName.value || "";
+    state.ppi = parseInt(el.ppi.value,10) || 10;
+    state.targetW = el.targetW.value ? parseInt(el.targetW.value,10) : null;
+    state.targetH = el.targetH && el.targetH.value ? parseInt(el.targetH.value,10) : null;
+        if(state.config==="Bifold" || state.config==="Bypass"){
+      state.handing = "No Hand";
+      state.bore = 0;
+    }
+    if(state.config==="Slab" && state.slabMach!=="YES"){
+      state.handing = "No Hand";
+      state.bore = 0;
+    }
+
+    enforceValidState();
+  }
+
+  function drawSlabRect(ctx, r, slabWpx, slabHfullPx, cutTopPx){
+    if(images.slab){
+      const off = document.createElement('canvas');
+      off.width = slabWpx;
+      off.height = slabHfullPx;
+      const og = off.getContext('2d');
+      og.imageSmoothingEnabled = true;
+      og.imageSmoothingQuality = "high";
+      og.drawImage(images.slab, 0,0, images.slab.naturalWidth, images.slab.naturalHeight, 0,0, slabWpx, slabHfullPx);
+      const srcY = Math.min(slabHfullPx, Math.max(0, cutTopPx));
+      const srcH = Math.max(1, slabHfullPx - srcY);
+      ctx.drawImage(off, 0, srcY, slabWpx, srcH, r.x, r.y, r.w, r.h);
+    } else {
+      ctx.fillStyle='#e5e7eb'; ctx.fillRect(r.x,r.y,r.w,r.h);
+      ctx.strokeStyle='#b8beca'; ctx.lineWidth=2; ctx.strokeRect(r.x+.5,r.y+.5,r.w-1,r.h-1);
+    }
+  }
+
+  function composeUnitCanvas(){
+    const ppi = state.ppi;
+    const slabWpx = in2px(state.slabW, ppi);
+    const slabHfullPx = in2px(state.slabH, ppi);
+    const cutTopPx = state.cutdownEnable ? in2px(state.cutdownIn, ppi) : 0;
+    const slabHpx = Math.max(1, slabHfullPx - cutTopPx);
+
+    const framePx = in2px(0.75, ppi);
+    const thPx = in2px(1.0, ppi);
+
+    const leaves = leavesCount();
+    const wallMode = (state.bgMode==="WALL");
+    const casingOn = wallMode && !!state.wallCasing && state.config!=="Bypass";
+    const hideFrame = wallMode && !!state.wallHideFrame && state.config!=="Slab" && state.config!=="Bypass";
+
+    const showFrameBase = hasFrameAndHinges() && state.config!=="Slab" && state.config!=="Bypass";
+    const showFrame = showFrameBase && !hideFrame;
+    const showThresh = state.category!=="Interior";
+    const bottomClearPx = (state.category==="Interior" && showFrame) ? framePx : 0;
+
+    let unitW, unitH;
+    if(!hasFrameAndHinges()){
+      unitW = leaves*slabWpx;
+      unitH = slabHpx + (showThresh ? thPx : 0);
+    } else if(state.config==="Bypass"){
+      unitW = 2*slabWpx;
+      unitH = slabHpx + (showThresh ? thPx : 0);
+    } else if(state.config==="Slab"){
+      unitW = slabWpx;
+      unitH = slabHpx + (showThresh ? thPx : 0);
+    } else {
+      // framed unit (jamb). In wall mode we can hide jamb and optionally add casing.
+      const revealPx = in2px(0.25, ppi);
+      const casingPx = casingOn ? in2px(2.25, ppi) : 0;
+
+      if(hideFrame){
+        unitW = leaves*slabWpx + 2*revealPx + 2*casingPx;
+        unitH = slabHpx + revealPx + casingPx + (showThresh ? thPx : 0);
+      } else {
+        unitW = leaves*slabWpx + 2*framePx + 2*casingPx;
+        unitH = slabHpx + framePx + casingPx + (showThresh ? thPx : 0) + bottomClearPx;
+      }
+    }
+
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, unitW); c.height = Math.max(1, unitH);
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+
+    const leafRects = [];
+    let openingRect = null;
+
+    if(!hasFrameAndHinges()){
+      for(let i=0;i<leaves;i++){
+        const rr={x:i*slabWpx, y:0, w:slabWpx, h:slabHpx};
+        drawSlabRect(ctx, rr, slabWpx, slabHfullPx, cutTopPx);
+        leafRects.push(rr);
+      }
+      openingRect = {x:0,y:0,w:leaves*slabWpx,h:slabHpx};
+    } else if(state.config==="Bypass"){
+      const l={x:0,y:0,w:slabWpx,h:slabHpx};
+      const r={x:slabWpx,y:0,w:slabWpx,h:slabHpx};
+      drawSlabRect(ctx, l, slabWpx, slabHfullPx, cutTopPx);
+      drawSlabRect(ctx, r, slabWpx, slabHfullPx, cutTopPx);
+      openingRect = {x:0,y:0,w:2*slabWpx,h:slabHpx};
+      leafRects.push(l,r);
+    } else if(state.config==="Slab"){
+      const r={x:0,y:0,w:slabWpx,h:slabHpx};
+      drawSlabRect(ctx, r, slabWpx, slabHfullPx, cutTopPx);
+      openingRect = r;
+      leafRects.push(r);
+    } else {
+      const revealPx = in2px(0.25, ppi);
+      const casingPx = casingOn ? in2px(2.25, ppi) : 0;
+      const off = (hideFrame ? (casingPx + revealPx) : (casingPx + framePx));
+      openingRect = {x:off, y:off, w:leaves*slabWpx, h:slabHpx};
+      for(let i=0;i<leaves;i++){
+        const rr={x:off + i*slabWpx, y:off, w:slabWpx, h:slabHpx};
+        drawSlabRect(ctx, rr, slabWpx, slabHfullPx, cutTopPx);
+        leafRects.push(rr);
+      }
+    }
+
+    // draw sill first, then frame over sill (extend jambs down)
+    if(showThresh && openingRect){
+      drawThreshold(ctx, openingRect, framePx, thPx, thresholdColors(state.sillColor), showFrame);
+    }
+    if(showFrame && openingRect){
+      const extendDown = showThresh ? thPx : bottomClearPx;
+      drawFrame(ctx, openingRect, framePx, frameColorsByMat(state.frameMat), extendDown);
+    }
+    // Installed casing (wall mode): draw over everything except sill/threshold
+    if(casingOn){
+      const casingPx = in2px(2.25, ppi);
+      const topH = c.height - (showThresh ? thPx : 0);
+      drawCasing(ctx, c.width, topH, casingPx);
+      // Optional soft shadow behind casing/door
+      if(state.wallShadow){
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,0.22)";
+        ctx.shadowBlur = Math.max(6, Math.round(ppi*0.9));
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = Math.max(3, Math.round(ppi*0.4));
+        ctx.restore();
+      }
+    }
+
+    if(state.category==="Exterior" && state.glassEnable){
+      const gp={ppi:ppi, wIn:state.glassW, hIn:state.glassH, topIn:state.glassTop};
+      if(state.config==="Double"){
+        drawGlass(ctx, leafRects[0], gp);
+        drawGlass(ctx, leafRects[1], gp);
+      } else if(leafRects[0]){
+        drawGlass(ctx, leafRects[0], gp);
+      }
+    }
+
+    if(hasHandingBore() && state.bore > 0 && leafRects.length){
+      const count = state.bore|0;
+      const faceR = in2px(2.125/2, ppi);
+      const backsetIn = 2.375;
+      const knobHeightIn = 36;
+      const deadboltCtcIn = 5.5;
+      const thirdCtcIn = 11;
+
+      const knobY = (r)=> r.y + r.h - in2px(knobHeightIn, ppi);
+      const drawBores = (r, side)=>{
+        const cx = (side==='LEFT') ? (r.x + in2px(backsetIn,ppi)) : (r.x + r.w - in2px(backsetIn,ppi));
+        const y1 = knobY(r);
+        fillCircle(ctx, cx, y1, faceR, '#000');
+        if(count>=2) fillCircle(ctx, cx, y1 - in2px(deadboltCtcIn, ppi), faceR, '#000');
+        if(count>=3) fillCircle(ctx, cx, y1 - in2px(thirdCtcIn, ppi), faceR, '#000');
+      };
+
+      if(state.config==="Double"){
+        const which = (state.handing==='LHIS' || state.handing==='RHOS') ? 0 : 1;
+        const rect = leafRects[which] || leafRects[0];
+        drawBores(rect, boreSide(state.handing));
+      } else {
+        drawBores(leafRects[0], boreSide(state.handing));
+      }
+    }
+
+    return c;
+  }
+
+  function buildDetailItems(){
+    const leaves=leavesCount();
+    const totalWIn = state.slabW * leaves;
+    const totalHIn = Math.max(1, state.slabH - (state.cutdownEnable ? state.cutdownIn : 0));
+    const call = callCode4FromTotal(totalWIn, totalHIn);
+    const wStr = inchStr(totalWIn);
+    const hStr = inchStr(totalHIn);
+    const thick = inchStr(state.slabT);
+
+    const coreNeeded = SCHEMA.coreRequiredSeries.includes(state.series);
+    const core = coreNeeded ? (state.core || "") : "";
+    const corePart = core ? ` ${core} Core` : "";
+
+    const boreLabel = (state.bore===0)?"No Bore":(state.bore===1)?"Single Bore":(state.bore===2)?"Double Bore":"Triple Bore";
+    const add=(id, v)=>({id, k:(SCHEMA.detailsAll.find(d=>d.id===id)?.label||id), v});
+
+    const items=[];
+    items.push(add("config", `${state.category} • ${state.config}`));
+
+    // Size detail (selectable lines)
+    const doorW = totalWIn;
+    const doorH = totalHIn;
+    const unitW = doorW + 1.5;
+    const unitH = doorH + 1.5;
+    const roW   = doorW + 2.0;
+    const roH   = doorH + 2.5;
+
+    const sizeLines = [];
+    if(state.sizeShowCall) sizeLines.push(`Call: ${call}`);
+    if(state.sizeShowDoor) sizeLines.push(`Door: ${inchStr(doorW)} × ${inchStr(doorH)}`);
+    if(state.sizeShowUnit) sizeLines.push(`Unit: ${inchStr(unitW)} × ${inchStr(unitH)}`);
+    if(state.sizeShowRO)   sizeLines.push(`R/O: ${inchStr(roW)} × ${inchStr(roH)}`);
+
+    items.push(add("size", sizeLines.join("\n")));
+
+        if(hasHandingBore()) items.push(add("hand", `${state.handing} • ${boreLabel}`));
+    const fam = state.family || "—";
+    const sty = state.style || "—";
+    items.push(add("material", `${fam} • ${thick}${corePart}`));
+    items.push(add("style", `${sty}`));
+
+    if(state.category==="Exterior" && state.glassEnable && state.glassDesc.trim()) items.push(add("glass", state.glassDesc.trim()));
+    if(hasFrameAndHinges() && state.config!=="Slab" && state.config!=="Bypass") items.push(add("frame", `${inchStr(state.frameThk)} • ${state.frameMat}`));
+    if(hasFrameAndHinges() && state.config!=="Bypass"){
+      if(state.config==="Slab" && state.slabMach==="YES" && state.hingePrep!=="Hinges installed") items.push(add("hinge", `${state.hingePrep}`));
+      else items.push(add("hinge", `${state.hingeFinish} • ${state.hingeType}`));
+    }
+    if(state.category!=="Interior"){
+      const c = (state.sillColor==="BRZ") ? "Bronze" : "Mill";
+      items.push(add("sill", `${state.sillThkLabel} • ${c} • ${state.sillType}`));
+    }
+    return items;
+  }
+
+  function buildDetailsOrdered(){
+    if(!state.includeDetails) return [];
+    const map = new Map(buildDetailItems().map(x=>[x.id,x]));
+    const out=[];
+    for(const id of state.detailOrder){
+      if(!state.detailEnabled[id]) continue;
+      const it = map.get(id);
+      if(!it) continue;
+      out.push(it);
+    }
+    return out;
+  }
+
+  function buildPricing(){
+    const sale = parseMoney(state.priceSaleText);
+    const reg = parseMoney(state.priceRegularText);
+    const pct = savingsPct(sale, reg);
+    return {sale, reg, pct};
+  }
+
+  function estimateTagHeight(count, scale){
+    const fsL = Math.round(12*scale);
+    const fsV = Math.round(14*scale);
+    const padY = Math.round(8*scale);
+    const boxH = Math.ceil(fsL + fsV + padY*2 + Math.round(6*scale));
+    return count * (boxH + Math.round(10*scale));
+  }
+
+  
+  function roundRect(ctx, x, y, w, h, r){
+    const rr = Math.max(0, Math.min(r, Math.min(w, h)/2));
+    ctx.beginPath();
+    ctx.moveTo(x+rr, y);
+    ctx.arcTo(x+w, y, x+w, y+h, rr);
+    ctx.arcTo(x+w, y+h, x, y+h, rr);
+    ctx.arcTo(x, y+h, x, y, rr);
+    ctx.arcTo(x, y, x+w, y, rr);
+    ctx.closePath();
+  }
+
+function drawTag(ctx, x, y, label, value, scale=1){
+    const padX = Math.round(10*scale), padY = Math.round(8*scale);
+    const r = Math.round(10*scale);
+    const fsL = Math.round(12*scale);
+    const fsV = Math.round(14*scale);
+    const gap = Math.round(6*scale);
+    const lineGap = Math.round(4*scale);
+
+    const v = String(value||"");
+    const rawLines = v.split("\n");
+
+    // Parse "Door/Unit/R/O: <W> × <H>" for nicer alignment
+    const sizeRe = /^(Door|Unit|R\/O):\s*(.+?)\s*[×x]\s*(.+)\s*$/i;
+    const lines = rawLines.filter(s=>s!=="" || rawLines.length===1).map(t=>{
+      const mm = t.match(sizeRe);
+      if(mm){
+        const key = mm[1].toUpperCase();
+        const prefix = (key==="R/O") ? "R/O:" : (mm[1][0].toUpperCase()+mm[1].slice(1).toLowerCase()+":");
+        return {type:"size", prefix, w:mm[2].trim(), h:mm[3].trim()};
+      }
+      return {type:"text", text:t};
+    });
+
+    ctx.save();
+
+    // Measure label
+    ctx.font = `800 ${fsL}px Inter, system-ui, sans-serif`;
+    const wL = ctx.measureText(label).width;
+
+    // Measure values
+    ctx.font = `650 ${fsV}px Inter, system-ui, sans-serif`;
+    let wV = 0;
+
+    const prefixPad = Math.round(8*scale);
+    const xPad = Math.round(8*scale);
+
+    const prefixes = lines.filter(o=>o.type==="size").map(o=>ctx.measureText(o.prefix).width);
+    const maxPrefix = prefixes.length ? Math.max(...prefixes) : 0;
+
+    const ws = lines.filter(o=>o.type==="size").map(o=>ctx.measureText(o.w).width);
+    const hs = lines.filter(o=>o.type==="size").map(o=>ctx.measureText(o.h).width);
+    const maxW = ws.length ? Math.max(...ws) : 0;
+    const maxH = hs.length ? Math.max(...hs) : 0;
+    const wX = ctx.measureText("×").width;
+
+    for(const ln of lines){
+      if(ln.type==="size"){
+        const total = maxPrefix + prefixPad + maxW + xPad + wX + xPad + maxH;
+        wV = Math.max(wV, total);
+      } else {
+        wV = Math.max(wV, ctx.measureText(ln.text).width);
+      }
+    }
+
+    const boxW = Math.ceil(Math.max(wL, wV) + padX*2);
+    const boxH = Math.ceil(fsL + gap + (lines.length*fsV) + (Math.max(0,lines.length-1)*lineGap) + padY*2);
+
+    // Box
+    roundRect(ctx, x, y, boxW, boxH, r);
+    ctx.fillStyle = "rgba(15,16,20,0.78)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.font = `800 ${fsL}px Inter, system-ui, sans-serif`;
+    const lx = x + padX;
+    const ly = y + padY + fsL;
+    ctx.textAlign = "left";
+    ctx.fillText(label, lx, ly);
+
+    // Values
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.font = `650 ${fsV}px Inter, system-ui, sans-serif`;
+
+    const baseY = ly + gap + fsV;
+    const wRightX = lx + maxPrefix + prefixPad + maxW;               // right edge for width
+    const xCenter = wRightX + xPad + (wX/2);                         // center for ×
+    const hLeftX  = wRightX + xPad + wX + xPad;                      // left edge for height
+
+    for(let i=0;i<lines.length;i++){
+      const yy = baseY + i*(fsV + lineGap);
+      const ln = lines[i];
+      if(ln.type==="size"){
+        // prefix
+        ctx.textAlign = "left";
+        ctx.fillText(ln.prefix, lx, yy);
+        // width (right)
+        ctx.textAlign = "right";
+        ctx.fillText(ln.w, wRightX, yy);
+        // × (center)
+        ctx.textAlign = "center";
+        ctx.fillText("×", xCenter, yy);
+        // height (left)
+        ctx.textAlign = "left";
+        ctx.fillText(ln.h, hLeftX, yy);
+      } else {
+        ctx.textAlign = "left";
+        ctx.fillText(ln.text, lx, yy);
+      }
+    }
+
+    ctx.restore();
+    return {w:boxW, h:boxH};
+  }
+
+
+  function drawBullets(ctx, x, y, items, scale=1, title="Details"){
+    const titleFs = Math.round(16*scale);
+    const bodyFs = Math.round(14*scale);
+    ctx.fillStyle = "#000000";
+    ctx.font = `900 ${titleFs}px Inter, system-ui, sans-serif`;
+    ctx.fillText(title, x, y);
+    y += titleFs + Math.round(12*scale);
+
+    ctx.font = `650 ${bodyFs}px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = "#000000";
+    for(const it of items){
+      ctx.fillText(`• ${it.k}: ${it.v}`, x, y);
+      y += bodyFs + Math.round(10*scale);
+    }
+    return y;
+  }
+
+  function drawPricingBlock(ctx, x, yBottom, maxW, scale=1){
+    const p = buildPricing();
+    const hasSKU = state.showSKU && state.sku.trim();
+    const hasQty = state.showQty && state.qty>0;
+    const saleStr = state.showSale ? fmtMoney(p.sale) : null;
+    const regStr = state.showRegular ? fmtMoney(p.reg) : null;
+    const pctStr = (state.showSavings && p.pct!=null) ? `${p.pct}% OFF` : null;
+
+    const pad = Math.round(12*scale);
+    const r = Math.round(14*scale);
+
+    const metaH = (hasSKU || hasQty) ? Math.round(20*scale) : 0;
+    const rowH = Math.round(32*scale);
+    const priceH = (saleStr || regStr || pctStr) ? rowH : 0;
+
+    const boxH = pad*2 + metaH + (metaH && priceH ? Math.round(10*scale) : 0) + priceH;
+    const y = yBottom - boxH;
+
+    ctx.fillStyle="rgba(255,255,255,0.94)";
+    ctx.strokeStyle="rgba(0,0,0,0.08)";
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+maxW, y, x+maxW, y+boxH, r);
+    ctx.arcTo(x+maxW, y+boxH, x, y+boxH, r);
+    ctx.arcTo(x, y+boxH, x, y, r);
+    ctx.arcTo(x, y, x+maxW, y, r);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent') || "#6b0016";
+    ctx.fillRect(x, y, Math.max(6, Math.round(8*scale)), boxH);
+
+    let cy = y + pad;
+    ctx.textBaseline="top";
+
+    if(metaH){
+      ctx.fillStyle="#111827";
+      ctx.font=`800 ${Math.round(12*scale)}px Inter, system-ui, sans-serif`;
+      let meta = [];
+      if(hasSKU) meta.push(`SKU: ${state.sku.trim()}`);
+      if(hasQty) meta.push(`Qty: ${state.qty}`);
+      ctx.fillText(meta.join("   •   "), x+pad+Math.round(10*scale), cy);
+      cy += metaH + Math.round(6*scale);
+    }
+
+    if(priceH){
+      const saleFs = Math.round(24*scale);
+      const regFs  = Math.round(15*scale);
+      const midY = cy + Math.round(priceH/2);
+
+      let cursorX = x + pad + Math.round(10*scale);
+
+      if(saleStr){
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--sale') || "#ff3b3b";
+        ctx.font=`900 ${saleFs}px Inter, system-ui, sans-serif`;
+        ctx.textBaseline="middle";
+        ctx.fillText(saleStr, cursorX, midY);
+        cursorX += ctx.measureText(saleStr).width + Math.round(12*scale);
+      }
+
+      if(regStr){
+        ctx.fillStyle="#111827";
+        ctx.font=`700 ${regFs}px Inter, system-ui, sans-serif`;
+        ctx.fillText(regStr, cursorX, midY);
+        cursorX += ctx.measureText(regStr).width + Math.round(10*scale);
+      }
+
+      if(pctStr){
+        ctx.fillStyle="#111827";
+        ctx.font=`800 ${Math.round(13*scale)}px Inter, system-ui, sans-serif`;
+        ctx.fillText(`(${pctStr})`, cursorX, midY);
+      }
+      ctx.textBaseline="top";
+    }
+  }
+
+  function computeFitScale(detailsCount, baseScale, availableH){
+    if(detailsCount<=0) return baseScale;
+    const need = estimateTagHeight(detailsCount, baseScale);
+    if(need <= availableH) return baseScale;
+    const factor = Math.max(0.65, availableH / need);
+    return baseScale * factor;
+  }
+
+  function composeRightPanel(ctx, x, y, maxW, maxH){
+    const baseScale = state.tagScalePct/100;
+    const details = buildDetailsOrdered();
+
+    const p = buildPricing();
+    const hasAnyPrice = (state.showSale && p.sale!=null) ||
+                        (state.showRegular && p.reg!=null) ||
+                        (state.showSavings && p.pct!=null) ||
+                        (state.showSKU && state.sku.trim()) ||
+                        (state.showQty && state.qty>0);
+
+    const bottomPad = Math.round(18*baseScale);
+    const pricingReserve = hasAnyPrice ? Math.round(126*baseScale) : 0;
+
+    const availableH = maxH - pricingReserve - bottomPad;
+    const effScale = computeFitScale(details.length, baseScale, availableH);
+
+    let cursorY = y;
+
+    if(state.includeDetails && details.length){
+      if(state.detailsStyle === "BULLETS"){
+        drawBullets(ctx, x, cursorY, details, effScale, "Details");
+      } else {
+        for(const it of details){
+          const box = drawTag(ctx, x, cursorY, it.k, it.v, effScale);
+          cursorY += box.h + Math.round(10*effScale);
+          if(cursorY > y + availableH) break;
+        }
+      }
+    }
+
+    if(hasAnyPrice){
+      drawPricingBlock(ctx, x, y + maxH - bottomPad, maxW, baseScale);
+    }
+  }
+
+  function composeCanvasUnitPlusPanel(unitCanvas){
+    // Canvas layout is a square (1:1) for icon-friendly output.
+    const size = Math.max(unitCanvas.height, 900);
+    const out = document.createElement("canvas");
+    out.width = size; out.height = size;
+    const g = out.getContext("2d");
+    g.imageSmoothingEnabled = true;
+
+    // Background for Canvas (non-wall)
+    if(state.bgMode==="WHITE"){ g.fillStyle="#fff"; g.fillRect(0,0,size,size); }
+    else if(state.bgMode==="BLACK"){ g.fillStyle="#000"; g.fillRect(0,0,size,size); }
+    // Transparent default
+
+    const pad = Math.round(size*0.03);
+    const hasPanel = (state.includeDetails && buildDetailsOrdered().length) ||
+                     (state.showSKU && state.sku.trim()) ||
+                     (state.showQty && state.qty>0) ||
+                     (state.showSale && parseMoney(state.priceSaleText)!=null) ||
+                     (state.showRegular && parseMoney(state.priceRegularText)!=null) ||
+                     (state.showSavings && buildPricing().pct!=null);
+
+    const leftW = hasPanel ? Math.round(size*0.68) : (size - 2*pad);
+    const unitBoxW = leftW - 2*pad;
+    const unitBoxH = size - 2*pad;
+
+    const s = Math.min(unitBoxW / unitCanvas.width, unitBoxH / unitCanvas.height);
+    const uW = Math.round(unitCanvas.width*s);
+    const uH = Math.round(unitCanvas.height*s);
+    const uX = pad + Math.round((unitBoxW - uW)/2);
+    const uY = pad + Math.round((unitBoxH - uH)/2);
+    g.drawImage(unitCanvas, uX, uY, uW, uH);
+
+    if(hasPanel){
+      const panelX = leftW;
+      const panelW = size - panelX - pad;
+      composeRightPanel(g, panelX, pad, panelW, size - 2*pad);
+    }
+    return out;
+  }
+
+  function composeMarketing16x9(unitCanvas){
+    const h = Math.max(720, unitCanvas.height);
+    const w = Math.round(h * 16 / 9);
+    const out = document.createElement("canvas");
+    out.width = w; out.height = h;
+    const g = out.getContext("2d");
+    g.imageSmoothingEnabled = true;
+
+    // Background for Marketing
+    if(state.bgMode==="WALL"){
+      const floorH = Math.round(h*0.05);
+      const floorTop = h - floorH; // top of floor
+      drawGeneratedWall(g, w, h, true, floorTop);
+    } else if(state.bgMode==="WHITE"){
+      g.fillStyle = "#fff"; g.fillRect(0,0,w,h);
+    } else if(state.bgMode==="BLACK"){
+      g.fillStyle = "#000"; g.fillRect(0,0,w,h);
+    }
+    // Transparent: do nothing
+
+    const pad = Math.round(h * 0.04);
+    const leftW = Math.round(w * 0.58);
+    const availW = leftW - 2*pad;
+
+    // For wall mode, only fit into space above the floor
+    const floorH = (state.bgMode==="WALL") ? Math.round(h*0.05) : 0;
+    const floorTop = (state.bgMode==="WALL") ? (h - floorH) : (h - pad);
+    const maxH = (state.bgMode==="WALL") ? (floorTop - pad) : (h - 2*pad);
+
+    const scaleUnit = Math.min(availW / unitCanvas.width, maxH / unitCanvas.height);
+    const uW = Math.round(unitCanvas.width * scaleUnit);
+    const uH = Math.round(unitCanvas.height * scaleUnit);
+    const uX = pad + Math.round((availW - uW)/2);
+    let uY = pad + Math.round((maxH - uH)/2);
+    if(state.bgMode==="WALL"){
+      uY = floorTop - uH; // bottom aligned to floor
+    }
+
+    g.drawImage(unitCanvas, uX, uY, uW, uH);
+
+    const panelX = leftW + pad;
+    const panelW = w - panelX - pad;
+    composeRightPanel(g, panelX, pad, panelW, h - 2*pad);
+    return out;
+  }
+
+  
+  function bgColorsByTone(tone){
+    if(tone==="COOL") return {wall:"#f3f6fb", shade:"#e6ebf5"};
+    if(tone==="GRAY") return {wall:"#e9eaec", shade:"#dfe1e6"};
+    if(tone==="SAGE") return {wall:"#e7eee6", shade:"#d7e2d5"};
+    if(tone==="SKY")  return {wall:"#e6f0fb", shade:"#d6e7f7"};
+    if(tone==="SAND") return {wall:"#f3eadc", shade:"#e7d9c3"};
+    if(tone==="TAUPE")return {wall:"#efe8e1", shade:"#e0d4c8"};
+    return {wall:"#f6f1e8", shade:"#ece5d8"}; // WARM
+  }
+
+  function drawGeneratedWall(ctx, w, h, withFloor){
+    const tone = bgColorsByTone(state.wallTone||"WARM");
+    // base wall
+    ctx.fillStyle = tone.wall;
+    ctx.fillRect(0,0,w,h);
+
+    // subtle texture (very light noise)
+    const density = Math.max(1200, Math.floor((w*h)/1800));
+    ctx.globalAlpha = 0.05;
+    ctx.fillStyle = "#000";
+    for(let i=0;i<density;i++){
+      const x = Math.random()*w;
+      const y = Math.random()*h;
+      const s = 1 + Math.random()*1.5;
+      ctx.fillRect(x,y,s,s);
+    }
+    ctx.globalAlpha = 1;
+
+    // gentle vignette
+    const g = ctx.createRadialGradient(w*0.5,h*0.35, Math.min(w,h)*0.2, w*0.5,h*0.35, Math.max(w,h)*0.9);
+    g.addColorStop(0, "rgba(0,0,0,0)");
+    g.addColorStop(1, "rgba(0,0,0,0.10)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+
+    if(withFloor){
+      const floorH = Math.round(h*0.05);
+      const y0 = h - floorH;
+
+      // floor base
+      const fg = ctx.createLinearGradient(0,y0,0,h);
+      fg.addColorStop(0, "#b28a61");
+      fg.addColorStop(1, "#7f5a3b");
+      ctx.fillStyle = fg;
+      ctx.fillRect(0,y0,w,floorH);
+
+      // plank-ish lines
+      ctx.globalAlpha = 0.18;
+      ctx.strokeStyle = "rgba(0,0,0,0.35)";
+      ctx.lineWidth = Math.max(1, Math.round(w/800));
+      for(let x=0; x<w; x+=Math.max(40, Math.round(w/18))){
+        ctx.beginPath(); ctx.moveTo(x,y0); ctx.lineTo(x,h); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // baseboard separator
+      const bbH = Math.max(10, Math.round(h*0.02));
+      ctx.fillStyle = "#f5f5f6";
+      ctx.fillRect(0, y0-bbH, w, bbH);
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.fillRect(0, y0-bbH, w, 2);
+    }
+  }
+
+  function drawBackground(ctx, w, h){
+    if(state.bgMode==="WHITE"){
+      ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,w,h);
+      return;
+    }
+    if(state.bgMode==="BLACK"){
+      ctx.fillStyle="#000000"; ctx.fillRect(0,0,w,h);
+      return;
+    }
+    if(state.bgMode==="WALL"){
+      // Wall background is Marketing-only
+      if(state.layout!=="MARKETING_16x9") return;
+      drawGeneratedWall(ctx, w, h, true);
+      return;
+    }
+    // TRANSPARENT: do nothing
+  }
+
+function scaleToTarget(canvas){
+    const tw = state.targetW;
+    const th = state.targetH;
+    if(!tw) return canvas;
+    const srcW = canvas.width, srcH = canvas.height;
+    let dw = tw || 0, dh = th || 0;
+    if(tw && th){ dw = tw; dh = th; }
+    else if(tw){ dw = tw; dh = Math.round(srcH * (tw/srcW)); }
+    const out = document.createElement('canvas');
+    out.width = Math.max(1, dw); out.height = Math.max(1, dh);
+    const g = out.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = "high";
+    g.drawImage(canvas, 0,0, out.width, out.height);
+    return out;
+  }
+
+  let lastFinalCanvas = null;
+
+  async function copyCanvasToClipboard(canvas){
+    if(!canvas) return;
+    if(!navigator.clipboard || !window.ClipboardItem){
+      alert("Clipboard image copy isn't supported in this browser.");
+      return;
+    }
+    return new Promise((resolve,reject)=>{
+      canvas.toBlob(async (blob)=>{
+        try{
+          const item = new ClipboardItem({[blob.type]: blob});
+          await navigator.clipboard.write([item]);
+          resolve(true);
+        }catch(err){
+          console.error(err);
+          alert("Copy failed. Try Chrome/Edge over HTTPS (or localhost).");
+          reject(err);
+        }
+      }, "image/png");
+    });
+  }
+
+  function renderAll(){
+    enforceValidState();
+    syncUIFromState();
+    syncBackgroundModeUI();
+    maybeLoadAutoSlab();
+
+    let unit = composeUnitCanvas();
+    let finalCanvas = unit;
+
+    if(state.layout === "UNIT_ONLY") finalCanvas = unit;
+    else if(state.layout === "MARKETING_16x9") finalCanvas = composeMarketing16x9(unit);
+    else finalCanvas = composeCanvasUnitPlusPanel(unit);
+
+    finalCanvas = scaleToTarget(finalCanvas);
+
+    // Apply background AFTER scaling so it matches the export size
+    if(state.bgMode && state.bgMode!=="TRANSPARENT" && !(state.layout==="MARKETING_16x9" && state.bgMode==="WALL")){
+      const bg = document.createElement("canvas");
+      bg.width = finalCanvas.width; bg.height = finalCanvas.height;
+      const bgctx = bg.getContext("2d");
+      bgctx.imageSmoothingEnabled = true;
+      drawBackground(bgctx, bg.width, bg.height);
+      bgctx.drawImage(finalCanvas, 0,0);
+      finalCanvas = bg;
+    }
+
+    lastFinalCanvas = finalCanvas;
+    const pb = document.getElementById("previewBadge");
+    if(pb && lastFinalCanvas){ pb.textContent = `${lastFinalCanvas.width}×${lastFinalCanvas.height}px`; }
+
+    el.canvas.width = finalCanvas.width;
+    el.canvas.height = finalCanvas.height;
+    const pg = el.canvas.getContext('2d');
+    pg.imageSmoothingEnabled = true;
+    pg.imageSmoothingQuality = "high";
+    pg.clearRect(0,0,el.canvas.width, el.canvas.height);
+    pg.drawImage(finalCanvas, 0,0);
+    if(window.__previewFitOnce) window.__previewFitOnce();
+}
+
+  function makeDrop(dropEl, inputEl, clearBtnEl, assignFn){
+    dropEl.addEventListener('click', (ev)=>{ if(ev.target===clearBtnEl) return; inputEl.click(); });
+    dropEl.addEventListener('dragover', (e)=>{ e.preventDefault(); dropEl.classList.add('drag'); });
+    dropEl.addEventListener('dragleave', ()=> dropEl.classList.remove('drag'));
+    dropEl.addEventListener('drop', (e)=>{
+      e.preventDefault(); dropEl.classList.remove('drag');
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if(f) loadFile(f);
+    });
+    inputEl.addEventListener('change', (e)=>{
+      const f = e.target.files && e.target.files[0];
+      if(f) loadFile(f);
+    });
+    clearBtnEl.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      assignFn(null);
+      inputEl.value = "";
+      renderAll();
+    });
+    function loadFile(f){
+      const url = URL.createObjectURL(f);
+      const img = new Image();
+      img.onload = ()=>{ assignFn(img); URL.revokeObjectURL(url); renderAll(); };
+      img.onerror = ()=>{ assignFn(null); URL.revokeObjectURL(url); renderAll(); };
+      img.src = url;
+    }
+  }
+  makeDrop(el.dropSlab, el.slabFile, el.clearSlab, (img)=>{ setSlabManual(img); });
+  makeDrop(el.dropGlass, el.glassFile, el.clearGlass, (img)=>{ images.glass = img; });
+
+  if(el.resetToAutoSlab){
+    el.resetToAutoSlab.addEventListener("click", (e)=>{
+      e.preventDefault();
+      state.slabSource = "auto";
+      images.slabDrag = null;
+      images.slabUrl = null;
+      if(el.slabUrl) el.slabUrl.value = "";
+      lastCustomSlabUrl = "";
+      lastAutoUrl = null;
+      refreshSlabPriority();
+      maybeLoadAutoSlab();
+      renderAll();
+    });
+  }
+
+  renderOrderUI();
+
+  
+  // --- Preview viewer (wheel/pinch zoom + drag pan) ---
+  function initPreviewViewer(){
+    const canvas = document.getElementById("canvas");
+    const stage = canvas ? canvas.closest(".preview-stage") : null;
+    if(!canvas || !stage) return;
+
+    const view = {scale:1, min:0.2, max:8, panX:0, panY:0, drag:false, lx:0, ly:0, pinch:null, fitOnce:false};
+
+    function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+    function apply(){
+      canvas.style.transform = `translate(${view.panX}px, ${view.panY}px) scale(${view.scale})`;
+    }
+    function reset(){
+      view.scale=1; view.panX=0; view.panY=0; apply();
+    }
+    function fit(){
+      if(!lastFinalCanvas) return;
+      const r = stage.getBoundingClientRect();
+      const iw = lastFinalCanvas.width, ih = lastFinalCanvas.height;
+      const fitScale = Math.min(r.width/iw, r.height/ih) * 0.95;
+      view.scale = clamp(fitScale, view.min, view.max);
+      view.panX=0; view.panY=0;
+      apply();
+    }
+
+    stage.addEventListener("wheel", (e)=>{
+      e.preventDefault();
+      const prev = view.scale;
+      const next = clamp(prev * (e.deltaY>0 ? 0.9 : 1.1), view.min, view.max);
+      const r = stage.getBoundingClientRect();
+      const cx = e.clientX - (r.left + r.width/2);
+      const cy = e.clientY - (r.top + r.height/2);
+      view.panX += cx - cx*(next/prev);
+      view.panY += cy - cy*(next/prev);
+      view.scale = next;
+      apply();
+    }, {passive:false});
+
+    stage.addEventListener("mousedown", (e)=>{ view.drag=true; view.lx=e.clientX; view.ly=e.clientY; });
+    window.addEventListener("mouseup", ()=>{ view.drag=false; });
+    window.addEventListener("mousemove", (e)=>{
+      if(!view.drag) return;
+      view.panX += (e.clientX - view.lx);
+      view.panY += (e.clientY - view.ly);
+      view.lx = e.clientX; view.ly = e.clientY;
+      apply();
+    });
+
+    stage.addEventListener("touchstart", (e)=>{
+      if(e.touches.length===2){
+        const dx=e.touches[0].clientX - e.touches[1].clientX;
+        const dy=e.touches[0].clientY - e.touches[1].clientY;
+        view.pinch = {dist: Math.hypot(dx,dy), scale: view.scale};
+      }else if(e.touches.length===1){
+        view.drag=true; view.lx=e.touches[0].clientX; view.ly=e.touches[0].clientY;
+      }
+    }, {passive:false});
+
+    stage.addEventListener("touchmove", (e)=>{
+      e.preventDefault();
+      if(e.touches.length===2 && view.pinch){
+        const dx=e.touches[0].clientX - e.touches[1].clientX;
+        const dy=e.touches[0].clientY - e.touches[1].clientY;
+        const dist=Math.hypot(dx,dy);
+        const ratio=dist/view.pinch.dist;
+        view.scale = clamp(view.pinch.scale * ratio, view.min, view.max);
+        apply();
+      }else if(e.touches.length===1 && view.drag){
+        view.panX += (e.touches[0].clientX - view.lx);
+        view.panY += (e.touches[0].clientY - view.ly);
+        view.lx=e.touches[0].clientX; view.ly=e.touches[0].clientY;
+        apply();
+      }
+    }, {passive:false});
+
+    stage.addEventListener("touchend", ()=>{ view.drag=false; view.pinch=null; });
+    stage.addEventListener("dblclick", ()=>reset());
+
+    window.__previewFit = fit;
+    window.__previewFitOnce = ()=>{ if(view.fitOnce) return; view.fitOnce=true; fit(); };
+  }
+
+  // --- Hide/show details controls based on includeDetails ---
+  
+  
+  function syncBackgroundModeUI(){
+    const layoutVal = document.getElementById("layout")?.value || state.layout;
+    const bgSel = document.getElementById("bgMode");
+    if(!bgSel) return;
+
+    const isMkt = (layoutVal === "MARKETING_16x9");
+    const wallOpt = Array.from(bgSel.options).find(o=>o.value==="WALL");
+    if(wallOpt){
+      wallOpt.hidden = !isMkt;
+      wallOpt.disabled = !isMkt;
+    }
+
+    if(!isMkt && bgSel.value==="WALL"){
+      bgSel.value = "TRANSPARENT";
+      state.bgMode = "TRANSPARENT";
+    }
+
+    const wallBox = document.getElementById("wallBgOptions");
+    if(wallBox){
+      wallBox.style.display = (isMkt && bgSel.value==="WALL") ? "" : "none";
+    }
+  }
+
+
+function syncDetailsControlsVisibility(){
+    const sel = document.getElementById("includeDetails");
+    const wrap = document.getElementById("detailsControlsWrap");
+    if(!sel || !wrap) return;
+    wrap.style.display = (sel.value === "YES") ? "" : "none";
+  }
+
+  // --- Add +/- steppers for numeric inputs (no spinners) ---
+  
+  
+  function syncTargetAutoH(){
+    // Keep target dimensions in sync with the selected layout aspect ratio
+    const ar = (state.layout==="MARKETING_16x9") ? (16/9) : 1;
+    const wEl = document.getElementById("targetW");
+    const hEl = document.getElementById("targetH");
+    if(!wEl || !hEl) return;
+
+    const w = parseInt(wEl.value,10);
+    const h = parseInt(hEl.value,10);
+
+    if(Number.isFinite(w) && w>0){
+      const newH = Math.max(1, Math.round(w / ar));
+      hEl.value = String(newH);
+      state.targetW = w; state.targetH = newH;
+    } else if(Number.isFinite(h) && h>0){
+      const newW = Math.max(1, Math.round(h * ar));
+      wEl.value = String(newW);
+      state.targetW = newW; state.targetH = h;
+    }
+  }
+
+function linkTargetSize(recalc){
+    const wEl = document.getElementById("targetW");
+    const hEl = document.getElementById("targetH");
+    if(!wEl || !hEl) return;
+    const ar = (state.layout === "MARKETING_16x9") ? (16/9) : 1;
+    if(recalc){
+      // prefer width as source if present
+      const w = parseFloat(wEl.value||"");
+      const h = parseFloat(hEl.value||"");
+      if(w && w>0){ hEl.value = String(Math.round(w / ar)); }
+      else if(h && h>0){ wEl.value = String(Math.round(h * ar)); }
+    }
+  }
+
+  function bindTargetSizeLink(){
+    const wEl = document.getElementById("targetW");
+    const hEl = document.getElementById("targetH");
+    if(!wEl || !hEl) return;
+    let lock=false;
+    function ar(){ return (state.layout === "MARKETING_16x9") ? (16/9) : 1; }
+    function fromW(){
+      if(lock) return;
+      const w=parseFloat(wEl.value||"");
+      if(!w || w<=0) return;
+      lock=true;
+      hEl.value = String(Math.round(w / ar()));
+      lock=false;
+      wEl.dispatchEvent(new Event("change",{bubbles:true}));
+      hEl.dispatchEvent(new Event("change",{bubbles:true}));
+    }
+    function fromH(){
+      if(lock) return;
+      const h=parseFloat(hEl.value||"");
+      if(!h || h<=0) return;
+      lock=true;
+      wEl.value = String(Math.round(h * ar()));
+      lock=false;
+      wEl.dispatchEvent(new Event("change",{bubbles:true}));
+      hEl.dispatchEvent(new Event("change",{bubbles:true}));
+    }
+    wEl.addEventListener("input", fromW);
+    hEl.addEventListener("input", fromH);
+
+    // initialize if one side set
+    if(wEl.value && !hEl.value) fromW();
+    if(hEl.value && !wEl.value) fromH();
+  }
+
+  function initSteppers(){
+    const cfg = [
+      {id:"slabW", step:1, min:12, max:72, integer:true},
+      {id:"qty", step:1, min:1, max:999, integer:true},
+      {id:"cutdownAmt", step:0.125, min:0, max:24, integer:false},
+      ];
+    for(const c of cfg){
+      const input = document.getElementById(c.id);
+      if(!input) continue;
+      if(input.dataset.stepper==="1") continue;
+
+      // hide spinners via CSS already
+      const parent = input.parentElement;
+      const wrap = document.createElement("div");
+      wrap.className = "stepper";
+      const minus = document.createElement("button");
+      minus.type="button"; minus.textContent="−";
+      const plus = document.createElement("button");
+      plus.type="button"; plus.textContent="+";
+      parent.insertBefore(wrap, input);
+      wrap.appendChild(minus);
+      wrap.appendChild(input);
+      wrap.appendChild(plus);
+
+      function setVal(delta){
+        let v = parseFloat(input.value || "0");
+        if(Number.isNaN(v)) v = 0;
+        v += delta * c.step;
+        if(c.min!=null) v = Math.max(c.min, v);
+        if(c.max!=null) v = Math.min(c.max, v);
+        if(c.integer) v = Math.round(v);
+        if(c.id==="cutdownAmt") v = Math.round(v*8)/8;
+        input.value = (c.id==="cutdownAmt") ? String(v).replace(/\.0+$/,'') : String(v);
+        input.dispatchEvent(new Event("input",{bubbles:true}));
+        input.dispatchEvent(new Event("change",{bubbles:true}));
+      }
+      minus.addEventListener("click", ()=>setVal(-1));
+      plus.addEventListener("click", ()=>setVal(1));
+      input.dataset.stepper="1";
+    }
+  }
+
+  // --- Update target auto height label ---
+  
+const ids = [
+    "category","config","bifoldCount","autoSlabEnable",
+    "slabW","slabH","cutdownEnable","cutdownIn","slabT",
+    "series","styleText","styleSelect","familyText","familySelect","core",
+    "slabMach",
+    "handing","bore",
+    "frameThk","frameMat",
+    "hingePrep","hingeType","hingeFinish",
+    "glassEnable","glassW","glassH","glassTop","glassDesc",
+    "sillType","sillThk","sillColor",
+    "includeDetails","detailsStyle","tagScale",
+    "showSKU","showQty","showSale","showRegular","showSavings","sku","qty","priceSale","priceRegular",
+    "layout","outName","ppi","targetW","targetH",
+ ,
+    "layout","bgMode","wallTone","wallShadow","wallCasing","wallHideFrame","sizeShowCall","sizeShowDoor","sizeShowUnit","sizeShowRO","outName","ppi","targetW","targetH"
+  ];
+  for(const id of ids){
+    const node = document.getElementById(id);
+    if(!node) continue;
+    const evt = (node.type==="checkbox") ? "change" : (node.tagName==="SELECT" ? "change" : "input");
+    node.addEventListener(evt, ()=>{ updateStateFromUI(); renderAll(); });
+    if(node.tagName==="INPUT" && node.type==="number") node.addEventListener("change", ()=>{ updateStateFromUI(); renderAll(); });
+  }
+
+  el.tagScale.addEventListener("input", ()=>{
+    state.tagScalePct = parseInt(el.tagScale.value,10) || 100;
+    el.tagScaleVal.textContent = `${state.tagScalePct}%`;
+    renderAll();
+  });
+
+  el.fitBtn.addEventListener("click", ()=>{ if(window.__previewFit){ window.__previewFit(); } });
+  // extra UI sync
+  el.includeDetails.addEventListener("change", ()=>{ syncDetailsControlsVisibility(); renderAll(); });
+  el.targetW.addEventListener("input", ()=>{ /* linked via linkTargetSize */ });
+  el.layout.addEventListener("change", ()=>{ syncTargetAutoH(); });
+
+el.btnRender.addEventListener("click", ()=>{ updateStateFromUI(); renderAll(); });
+
+  function moneyBlur(id){
+    const n = parseMoney(document.getElementById(id).value);
+    document.getElementById(id).value = n==null ? document.getElementById(id).value.trim() : fmtMoney(n);
+    updateStateFromUI(); renderAll();
+  }
+  el.priceSale.addEventListener("blur", ()=>moneyBlur("priceSale"));
+  el.priceRegular.addEventListener("blur", ()=>moneyBlur("priceRegular"));
+
+  el.btnDownload.addEventListener("click", ()=>{
+    if(!lastFinalCanvas) return;
+    const a = document.createElement("a");
+    const base = state.outName || "unit";
+    a.href = lastFinalCanvas.toDataURL("image/png");
+    a.download = `${base}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  const btnCopy = document.getElementById("btnCopyClipboard");
+  if(btnCopy){
+    btnCopy.addEventListener("click", async ()=>{
+      try{ await copyCanvasToClipboard(lastFinalCanvas); }catch(e){}
+    });
+  }
+
+  el.btnDownloadSet.addEventListener("click", ()=>{
+    const base = state.outName || "unit";
+    const unitOnly = scaleToTarget(composeUnitCanvas());
+    const canvasWithPanel = scaleToTarget(composeCanvasUnitPlusPanel(composeUnitCanvas()));
+    const marketing = scaleToTarget(composeMarketing16x9(composeUnitCanvas()));
+    const set = [
+      {name:`${base}__unit.png`, c:unitOnly},
+      {name:`${base}__canvas.png`, c:canvasWithPanel},
+      {name:`${base}__16x9.png`, c:marketing},
+    ];
+    for(const it of set){
+      const a=document.createElement("a");
+      a.href = it.c.toDataURL("image/png");
+      a.download = it.name;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+  });
+
+  initPreviewViewer();
+  bindTargetSizeLink();
+  initSteppers();
+  syncDetailsControlsVisibility();
+  enforceValidState();
+  syncUIFromState();
+  renderAll();
+})();});
+
+</script>
+</body>
+</html>

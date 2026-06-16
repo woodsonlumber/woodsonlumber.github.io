@@ -3,65 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ODL Glass Lookup Live</title>
+<title>Woodson Lumber | ODL Glass Lookup</title>
 <style>
-:root{--bg:#f7f3ee;--card:#fffdfa;--ink:#24160f;--muted:#78685d;--line:#e6d8c9;--brand:#8b1e16;--brand2:#4b2418;--brand3:#c49a4a;--soft:#fff4df;--warn:#fff2b8;--shadow:0 14px 34px rgba(69,35,20,.12);--radius:18px}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;padding:18px 22px;box-shadow:0 8px 24px rgba(69,35,20,.24);border-bottom:4px solid var(--brand3)}
-.header-row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-h1{margin:0;font-size:24px;letter-spacing:-.03em}.sub{opacity:.86;font-size:13px;margin-top:4px}
-.mode{display:flex;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:4px;gap:4px}
-.mode button{border:0;padding:9px 14px;border-radius:999px;background:transparent;color:white;font-weight:700;cursor:pointer}
-.mode button.active{background:white;color:var(--brand)}
-.wrap{max-width:1560px;margin:0 auto;padding:18px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}
-.controls{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;position:sticky;top:96px;max-height:calc(100vh - 116px);overflow:auto}
-.controls-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
-.controls-title{font-size:14px;font-weight:900;color:#111827}
-.controls-grid{display:grid;grid-template-columns:1fr;gap:12px}
-label{font-size:12px;font-weight:800;color:#374151;display:block;margin:0 0 5px}
-input,select{width:100%;border:1px solid var(--line);border-radius:12px;background:white;padding:10px 11px;color:var(--ink);font-size:14px}
-input:focus,select:focus{outline:2px solid rgba(196,154,74,.35);border-color:var(--brand3)}
-.price-settings{display:grid;grid-template-columns:1fr;gap:12px;align-items:end;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
-.control-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
-.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3}.pill.good{background:#dcfce7;color:#166534}.pill.warn{background:var(--warn);color:#92400e}
-.btn{border:0;border-radius:12px;background:var(--brand);color:white;padding:10px 13px;font-weight:850;cursor:pointer}.btn:hover{filter:brightness(.96)}.btn.secondary{background:#f3f4f6;color:#111827;border:1px solid var(--line)}.btn.tiny{padding:7px 10px;border-radius:10px;font-size:12px}
-.results-panel{min-width:0}.results-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.result-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.small-select{width:auto;min-width:82px}
-.pager{display:flex;align-items:center;gap:8px}#pageInfo{font-size:12px;font-weight:800;color:#64748b;min-width:92px;text-align:center}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
-.imgbox{height:210px;background:#f8fafc;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
-.imgbox img{max-width:100%;max-height:100%;object-fit:contain;padding:10px}.image-badge{position:absolute;right:10px;bottom:10px;background:rgba(15,23,42,.72);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:5px 8px}
-.placeholder{width:78%;height:78%;border:2px dashed #cbd5e1;border-radius:18px;color:#94a3b8;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1.25;background:linear-gradient(135deg,#fff,#f1f5f9)}
-.card-body{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}.topline{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.family{font-size:18px;font-weight:950;letter-spacing:-.02em}.odl{font-size:12px;font-weight:950;color:var(--brand);white-space:nowrap;background:var(--soft);border:1px solid #ead09d;border-radius:999px;padding:5px 8px}
-.meta{font-size:12px;color:#4b5563;font-weight:700;margin-top:3px}.tags{display:flex;flex-wrap:wrap;gap:6px}.tag{font-size:11px;font-weight:850;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:5px 8px}.tag.cat{background:#fef3c7;color:#92400e;border-color:#fde68a}
-.price-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto}.price{border:1px solid var(--line);border-radius:14px;padding:10px;background:#f9fafb;text-align:right;min-width:0}.price .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;font-weight:900}.price .amt{font-size:18px;font-weight:950;margin-top:3px;white-space:nowrap}.price.door{background:#fff4df}.price.store{background:#f8efe6}.price.customer{background:#fffaf1}
-.actions{display:flex;gap:8px;margin-top:2px}.actions .btn{width:100%}
-body.mode-store .price.door,body.mode-customer .price.door,body.mode-customer .price.store{display:none!important}
-body.mode-store .price-row{grid-template-columns:repeat(2,1fr)}body.mode-customer .price-row{grid-template-columns:1fr}
-body.mode-store .setting-door,body.mode-store .setting-store{display:none!important}body.mode-customer .setting-door,body.mode-customer .setting-store,body.mode-customer .setting-customer{display:none!important}
-body.mode-customer #resetPricing{display:none!important}body.mode-store .door-only,body.mode-customer .internal-only{display:none!important}
-.filter-toggle-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}body.filters-hidden .wrap{grid-template-columns:minmax(0,1fr)}body.filters-hidden .controls{display:none}
-.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.62);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
-.modal{width:min(1100px,96vw);max-height:92vh;overflow:auto;background:white;border-radius:22px;box-shadow:0 28px 80px rgba(0,0,0,.35)}
-.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:white;z-index:1}
-.modal-title{font-size:22px;font-weight:950}.x{font-size:24px;border:0;background:#f3f4f6;border-radius:10px;width:40px;height:40px;cursor:pointer}
-.modal-content{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:18px;padding:18px}.modal-img{background:#f8fafc;border:1px solid var(--line);border-radius:18px;min-height:360px;display:flex;align-items:center;justify-content:center;overflow:hidden}.modal-img img{max-width:100%;max-height:520px;object-fit:contain}
-.modal-prices{margin:12px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}body.mode-store .modal-prices{grid-template-columns:repeat(2,1fr)}body.mode-customer .modal-prices{grid-template-columns:1fr}
-.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:0 0 12px}.tab-btn{border:0;background:transparent;padding:10px 12px;font-weight:950;color:#64748b;cursor:pointer;border-bottom:3px solid transparent}.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand)}.tab-panel{display:none}.tab-panel.active{display:block}
-.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.detail{border:1px solid var(--line);border-radius:14px;padding:10px;background:#f9fafb}.detail b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;margin-bottom:4px}.detail span{font-weight:750;word-break:break-word}
-.similar-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}.similar-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:13px}.similar-table th,.similar-table td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;white-space:nowrap}.similar-table th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#64748b}.similar-table tr:last-child td{border-bottom:0}.similar-table tr.current-model-row td{background:#ecfdf5}.similar-table tr.same-item-row td{background:#fef9c3}.similar-table tr.current-model-row.same-item-row td{background:#dcfce7}.similar-link{border:0;background:none;color:var(--brand);font-weight:950;cursor:pointer;padding:0;text-align:left}.model-filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:0 0 12px}.model-filter-row .filter-field{min-width:180px}.model-filter-row label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:900;margin-bottom:4px}.model-filter-row select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:white;font-weight:750}.resource-filter-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px}.resource-filter-group{margin:0 0 14px}.resource-filter-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:950;margin:0 0 6px}.group-note{font-size:12px;color:#0f766e;font-weight:900;margin-top:7px}.inline-check{display:flex;align-items:center;gap:7px;font-weight:850;font-size:13px;white-space:nowrap}.inline-check input{width:auto}.resource-filter-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:7px;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:850;max-width:210px}.resource-filter-btn img{width:40px;height:40px;object-fit:contain;border-radius:8px;background:#f8fafc}.resource-filter-btn.active{border-color:var(--brand);background:var(--soft)}.checkline{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-weight:800}.checkline input{width:auto}
-.link{color:var(--brand);font-weight:900;text-decoration:none}.empty{padding:40px;text-align:center;background:white;border:1px dashed #cbd5e1;border-radius:18px;color:#64748b;font-weight:800}
-@media(max-width:1100px){.wrap{grid-template-columns:1fr}.controls{position:relative;top:auto;max-height:none}.modal-content{grid-template-columns:1fr}}
+:root{
+  --bg:#f4f6f8;--card:#ffffff;--ink:#15171c;--muted:#6b7280;--line:#e5e7eb;
+  --brand:#6b0016;--brand2:#1f2937;--accent:#b08a57;--soft:#f8e9ee;--warn:#fff3cd;
+  --shadow:0 14px 34px rgba(17,24,39,.09);--radius:18px
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;padding:18px 22px;box-shadow:0 8px 24px rgba(0,0,0,.18);border-bottom:3px solid var(--brand)}
+.header-row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:24px;letter-spacing:-.03em}.sub{opacity:.86;font-size:13px;margin-top:4px;color:inherit}.muted{color:var(--muted);font-size:13px}.mode{display:flex;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:4px;gap:4px}.mode button{border:0;padding:9px 14px;border-radius:999px;background:transparent;color:white;font-weight:800;cursor:pointer}.mode button.active{background:#fff;color:var(--brand)}
+.wrap{max-width:1560px;margin:0 auto;padding:18px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}.controls{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;position:sticky;top:96px;max-height:calc(100vh - 116px);overflow:auto}.controls-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--line)}.controls-title{font-size:14px;font-weight:900}.controls-grid{display:grid;grid-template-columns:1fr;gap:12px}label{font-size:12px;font-weight:850;color:#374151;display:block;margin:0 0 5px}input,select{width:100%;border:1px solid var(--line);border-radius:12px;background:white;padding:10px 11px;color:var(--ink);font-size:14px}input:focus,select:focus{outline:2px solid rgba(107,0,22,.16);border-color:var(--brand)}
+.price-settings{display:grid;grid-template-columns:1fr;gap:12px;align-items:end;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.control-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;background:#ffe3ea;color:#374151}.pill.good{background:#f8e9ee;color:#6b0016}.pill.warn{background:var(--warn);color:#7c4a00}.btn{border:0;border-radius:12px;background:var(--brand);color:white;padding:10px 13px;font-weight:850;cursor:pointer}.btn.secondary{background:#f9fafb;color:var(--ink);border:1px solid var(--line)}.btn.tiny{padding:7px 10px;border-radius:10px;font-size:12px}.btn:disabled{opacity:.45;cursor:not-allowed}
+.results-panel{min-width:0}.results-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}.result-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.small-select{width:auto;min-width:82px}.pager{display:flex;align-items:center;gap:8px}#pageInfo{font-size:12px;font-weight:800;color:#6b7280;min-width:92px;text-align:center}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}.imgbox{height:210px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}.imgbox img{max-width:100%;max-height:100%;object-fit:contain;padding:10px}.image-badge{position:absolute;right:10px;bottom:10px;background:rgba(17,24,39,.78);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:5px 8px}.placeholder{width:78%;height:78%;border:2px dashed #d1d5db;border-radius:18px;color:#9ca3af;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;line-height:1.25;background:linear-gradient(135deg,#fff,#f3f4f6)}.card-body{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}.topline{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.family{font-size:18px;font-weight:950;letter-spacing:-.02em}.odl{font-size:12px;font-weight:950;color:var(--brand);white-space:nowrap;background:#f8e9ee;border:1px solid #e8bfca;border-radius:999px;padding:5px 8px}.meta{font-size:12px;color:#4b5563;font-weight:700;margin-top:3px}.tags{display:flex;flex-wrap:wrap;gap:6px}.tag{font-size:11px;font-weight:850;color:#4b5563;background:#f3f4f6;border:1px solid var(--line);border-radius:999px;padding:5px 8px}.tag.cat{background:#f8e9ee;color:#6b0016;border-color:#e8bfca}.price-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto}.price{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff;text-align:right;min-width:0}.price .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#7a6a58;font-weight:900}.price .amt{font-size:18px;font-weight:950;margin-top:3px;white-space:nowrap}.price.door{background:#fff7f9}.price.store{background:#f9fafb}.price.customer{background:#fff7ed}.actions{display:flex;gap:8px;margin-top:2px}.actions .btn{width:100%}
+body.mode-store .price.door,body.mode-customer .price.door,body.mode-customer .price.store{display:none!important}body.mode-store .price-row{grid-template-columns:repeat(2,1fr)}body.mode-customer .price-row{grid-template-columns:1fr}body.mode-store .setting-door,body.mode-store .setting-store{display:none!important}body.mode-customer .setting-door,body.mode-customer .setting-store,body.mode-customer .setting-customer{display:none!important}body.mode-customer #resetPricing{display:none!important}body.mode-store .door-only,body.mode-customer .internal-only{display:none!important}.filter-toggle-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}body.filters-hidden .wrap{grid-template-columns:minmax(0,1fr)}body.filters-hidden .controls{display:none}
+.modal-backdrop{position:fixed;inset:0;background:rgba(35,24,21,.68);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal{width:min(1180px,96vw);max-height:92vh;overflow:auto;background:var(--card);border-radius:22px;box-shadow:0 28px 80px rgba(0,0,0,.35);border:1px solid var(--line)}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);z-index:2}.modal-title{font-size:22px;font-weight:950}.x{font-size:24px;border:0;background:#f9fafb;border-radius:10px;width:40px;height:40px;cursor:pointer}.modal-content{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:18px;padding:18px;align-items:start}.modal-left{position:sticky;top:84px;align-self:start}.modal-img{background:#fff;border:1px solid var(--line);border-radius:18px;min-height:440px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px}.modal-img img{width:100%;max-width:100%;max-height:68vh;object-fit:contain;object-position:center}.modal-side-links{margin-top:10px;font-size:12px}.modal-side-links a{color:var(--brand);font-weight:800;text-decoration:none}.modal-prices{margin:12px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}body.mode-store .modal-prices{grid-template-columns:repeat(2,1fr)}body.mode-customer .modal-prices{grid-template-columns:1fr}.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:0 0 12px}.tab-btn{border:0;background:transparent;padding:10px 12px;font-weight:950;color:#6b7280;cursor:pointer;border-bottom:3px solid transparent}.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand)}.tab-panel{display:none}.tab-panel.active{display:block}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.detail{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff}.detail b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#7a6a58;margin-bottom:4px}.detail span{font-weight:750;word-break:break-word}.similar-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}.similar-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:13px}.similar-table th,.similar-table td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;white-space:nowrap}.similar-table th{background:#f9fafb;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}.similar-table tr:last-child td{border-bottom:0}.similar-table tr.current-model-row td{background:#fff1f4}.similar-table tr.same-item-row td{background:#f8e9ee}.similar-table tr.current-model-row.same-item-row td{background:#ffe3ea}.similar-link{border:0;background:none;color:var(--brand);font-weight:950;cursor:pointer;padding:0;text-align:left}.resource-filter-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px;overflow:visible}.resource-filter-group{margin:0 0 14px;overflow:visible}.resource-filter-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px}.resource-filter-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;font-weight:950;margin:0}.frame-guide-link{font-size:11px;color:var(--brand);font-weight:900;text-decoration:none;white-space:nowrap}.group-note{font-size:12px;color:var(--brand);font-weight:900;margin-top:7px}.resource-filter-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:7px;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:850;max-width:210px;position:relative;overflow:visible}.resource-filter-btn img{width:40px;height:40px;object-fit:contain;border-radius:8px;background:#fff}.resource-filter-btn.active{border-color:var(--brand);background:#f8e9ee;box-shadow:0 0 0 2px rgba(107,0,22,.14) inset}.hover-preview{display:none;position:absolute;left:0;top:calc(100% + 8px);width:380px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px rgba(17,24,39,.22);padding:14px;z-index:30;text-align:left}.hover-preview img{width:100%;height:240px;object-fit:contain;background:#fff;border-radius:10px;margin-bottom:8px}.hover-preview .hover-title{display:block;font-size:12px;font-weight:900;color:var(--ink);margin-bottom:4px}.hover-preview .hover-note{display:block;font-size:11px;color:var(--muted)}.resource-filter-btn:hover .hover-preview{display:block}.checkline{display:inline-flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-weight:800;margin:0 0 12px}.checkline input{width:auto}.inline-check{display:flex;align-items:center;gap:7px;font-weight:850;font-size:13px;white-space:nowrap}.inline-check input{width:auto}.link{color:var(--brand);font-weight:900;text-decoration:none}.empty{padding:40px;text-align:center;background:var(--card);border:1px dashed #d1d5db;border-radius:18px;color:#6b7280;font-weight:800}
+.conditional-filter{border-left:4px solid var(--brand);padding-left:10px}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr}.controls{position:relative;top:auto;max-height:none}.modal-content{grid-template-columns:1fr}.modal-left{position:relative;top:auto}}
 @media(max-width:620px){.grid{grid-template-columns:1fr}.price{padding:8px}.price .lbl{font-size:9px}.price .amt{font-size:15px}.modal-prices{gap:8px}.header-row{align-items:flex-start}.mode{width:100%;justify-content:space-between}.mode button{flex:1}.modal-content{padding:12px}.modal-img{min-height:240px}.detail-grid{grid-template-columns:1fr}}
+
+.page-footer{max-width:1560px;margin:0 auto 24px;padding:0 18px;color:var(--muted);font-size:12px;text-align:right}.modal-tools{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin:0 0 12px}.sortable-th{cursor:pointer;user-select:none}.sortable-th:hover{color:var(--brand);background:#f8e9ee}.sort-mark{font-size:10px;margin-left:4px;color:var(--brand)}@media print{body.print-modal header,body.print-modal .wrap,body.print-modal .page-footer{display:none!important}body.print-modal .modal-backdrop{display:block!important;position:static!important;background:#fff!important;padding:0!important}body.print-modal .modal{width:100%!important;max-height:none!important;box-shadow:none!important;border:0!important;border-radius:0!important}body.print-modal .modal-head{position:static!important;background:#fff!important}.modal-print-btn,body.print-modal .x{display:none!important}body.print-modal .modal-content{grid-template-columns:260px 1fr!important;padding:12px!important}body.print-modal .modal-left{position:static!important}body.print-modal .modal-img{min-height:240px!important}.similar-table th,.similar-table td{white-space:normal!important}}
 @media print{header,.controls,.actions,.results-head{display:none}.wrap{padding:0;display:block}.grid{grid-template-columns:repeat(2,1fr)}.card{box-shadow:none;break-inside:avoid}.imgbox{height:130px}}
 </style>
 </head>
 <body class="mode-store">
-<header><div class="header-row"><div><h1>Woodson Lumber | ODL Glass Lookup</h1><div class="sub">Door Shop lookup for ODL item numbers, sizes, families, glass, frames, models, and pricing. Data loads live from the ODLListPrice.csv file on GitHub.</div></div><div class="mode" aria-label="View mode"><button data-mode="door" type="button">Door Shop</button><button data-mode="store" type="button" class="active">Store</button><button data-mode="customer" type="button">Customer</button></div></div></header>
+<header><div class="header-row"><div><h1>Woodson Lumber | ODL Glass Lookup</h1><div class="sub">Live ODL doorglass lookup with Woodson pricing views, model grouping, and product option browsing.</div></div><div class="mode" aria-label="View mode"><button data-mode="door" type="button">Door Shop</button><button data-mode="store" type="button" class="active">Store</button><button data-mode="customer" type="button">Customer</button></div></div></header>
 <main class="wrap">
   <aside class="controls">
     <div class="controls-top"><div class="controls-title">Filters</div><button class="btn secondary tiny" id="hideFilters" type="button">Hide</button></div>
@@ -69,11 +35,12 @@ body.mode-customer #resetPricing{display:none!important}body.mode-store .door-on
       <div><label for="q">Search</label><input id="q" placeholder="ODL #, family, model, glass, frame..."></div>
       <div><label for="size">Size</label><select id="size"></select></div>
       <div><label for="category">Category</label><select id="category"></select></div>
+      <div id="igColorFilterWrap" class="conditional-filter" style="display:none"><label for="igColor">Blinds Color</label><select id="igColor"></select></div>
       <div><label for="family">Family</label><select id="family"></select></div>
       <div><label for="model">Model</label><select id="model"></select></div>
-      <div><label for="frameType">Frame Type</label><select id="frameType"></select></div>
-      <div><label for="frameColor">Frame Color</label><select id="frameColor"></select></div>
-      <div><label for="glassType">Glass Type</label><select id="glassType"></select></div>
+      <div data-product-filter><label for="frameType">Frame Type</label><select id="frameType"></select></div>
+      <div data-product-filter><label for="frameColor">Frame Color</label><select id="frameColor"></select></div>
+      <div data-product-filter><label for="glassType">Glass Type</label><select id="glassType"></select></div>
     </div>
     <div class="control-actions"><button class="btn secondary" id="resetFilters" type="button">Reset Filters</button><button class="btn secondary" id="collapseFilters" type="button">Hide Filters</button></div>
     <div class="price-settings">
@@ -82,476 +49,59 @@ body.mode-customer #resetPricing{display:none!important}body.mode-store .door-on
       <div class="setting-customer"><label for="customerMargin">Customer Margin %</label><input id="customerMargin" type="number" step="0.1" value="25"></div>
       <button class="btn secondary" id="resetPricing" type="button">Reset Pricing</button><button class="btn" id="exportCsv" type="button">Export Results</button>
     </div>
-    <div class="stats"><span class="pill good" id="countPill">0 results</span><span class="pill" id="pricingPill">Door 0.504 • Store Margin 30% • Customer Margin 25%</span><span class="pill warn" id="dataSourcePill">Data source: loading…</span></div>
+    <div class="stats"><span class="pill good" id="countPill">0 results</span></div>
   </aside>
-  <section class="results-panel"><div class="results-head"><div class="filter-toggle-row"><button class="btn secondary tiny" id="showFilters" type="button">Show Filters</button></div><div><div id="resultSummary"></div><div id="viewSummary" class="sub"></div></div><div class="result-tools"><button class="btn secondary tiny" id="refreshData" type="button">Refresh Data</button><label class="inline-check" title="Show one card per Size + Category + Family + Model"><input id="groupByModel" type="checkbox" checked> Group by Model</label><label for="sortBy" style="margin:0">Sort</label><select id="sortBy" class="small-select"><option value="default">Default</option><option value="priceAsc">Price: Low to High</option><option value="priceDesc">Price: High to Low</option></select><label for="pageSize" style="margin:0">Show</label><select id="pageSize" class="small-select"><option value="50">50</option><option value="100" selected>100</option><option value="150">150</option><option value="200">200</option><option value="250">250</option></select><span>items per page</span><div class="pager"><button class="btn secondary tiny" id="prevPage" type="button">Prev</button><span id="pageInfo"></span><button class="btn secondary tiny" id="nextPage" type="button">Next</button></div></div></div><section id="grid" class="grid"></section></section>
+  <section class="results-panel"><div class="results-head"><div class="filter-toggle-row"><button class="btn secondary tiny" id="showFilters" type="button">Show Filters</button></div><div><div id="resultSummary"></div><div id="viewSummary" class="muted"></div></div><div class="result-tools"><button class="btn secondary tiny" id="refreshData" type="button">Refresh Data</button><label class="inline-check" title="Show one card per Size + Category + Family + Model"><input id="groupByModel" type="checkbox" checked> Group by Model</label><label class="inline-check" title="Hide impact rated Keystone frame options"><input id="hideImpactRated" type="checkbox" checked> Hide Impact Rated</label><label for="sortBy" style="margin:0">Sort</label><select id="sortBy" class="small-select"><option value="default">Default</option><option value="priceAsc">Price: Low to High</option><option value="priceDesc">Price: High to Low</option></select><label for="pageSize" style="margin:0">Show</label><select id="pageSize" class="small-select"><option value="50">50</option><option value="100" selected>100</option><option value="150">150</option><option value="200">200</option><option value="250">250</option></select><span>items per page</span><div class="pager"><button class="btn secondary tiny" id="prevPage" type="button">Prev</button><span id="pageInfo"></span><button class="btn secondary tiny" id="nextPage" type="button">Next</button></div></div></div><section id="grid" class="grid"></section></section>
 </main>
-<div class="modal-backdrop" id="modalBackdrop"><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><div><div class="modal-title" id="modalTitle"></div><div class="sub" id="modalSub"></div></div><button class="x" id="modalClose" type="button">×</button></div><div class="modal-content" id="modalContent"></div></div></div>
+<footer class="page-footer"><span id="footerDataSource">Data source: loading…</span></footer>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><div><div class="modal-title" id="modalTitle"></div><div class="muted" id="modalSub"></div></div><button class="x" id="modalClose" type="button">×</button></div><div class="modal-content" id="modalContent"></div></div></div>
 <script>
 const DATA_URL = 'https://raw.githubusercontent.com/woodsonlumber/woodsonlumber.github.io/refs/heads/main/ODLListPrice.csv';
 const RESOURCE_IMAGE_URL = 'https://raw.githubusercontent.com/woodsonlumber/woodsonlumber.github.io/refs/heads/main/ODLResourceImages.csv';
-let RAW_DATA = [];
-let RESOURCE_IMAGES = [];
-let DATA = [];
-let filtered = DATA.slice();
-let currentMode = 'store';
-let currentPage = 1;
-let currentModalItem = null;
-let currentModalRow = null;
-const FILTER_FIELDS = [
-  {id:'size', field:'size', label:'Sizes'},
-  {id:'category', field:'category', label:'Categories'},
-  {id:'family', field:'family', label:'Families'},
-  {id:'model', field:'model', label:'Models'},
-  {id:'frameType', field:'frameType', label:'Frame Types'},
-  {id:'frameColor', field:'frameColor', label:'Frame Colors'},
-  {id:'glassType', field:'glassType', label:'Glass Types'}
-];
-const HIDDEN_FILTER_VALUES = new Set(['***DC***','see glass type for size','special']);
-const els = {
-  q: document.getElementById('q'), size: document.getElementById('size'), category: document.getElementById('category'), family: document.getElementById('family'),
-  model: document.getElementById('model'), frameType: document.getElementById('frameType'), frameColor: document.getElementById('frameColor'), glassType: document.getElementById('glassType'),
-  grid: document.getElementById('grid'), countPill: document.getElementById('countPill'), pricingPill: document.getElementById('pricingPill'), dataSourcePill: document.getElementById('dataSourcePill'), resultSummary: document.getElementById('resultSummary'), viewSummary: document.getElementById('viewSummary'),
-  pageSize: document.getElementById('pageSize'), sortBy: document.getElementById('sortBy'), groupByModel: document.getElementById('groupByModel'), pageInfo: document.getElementById('pageInfo'), prevPage: document.getElementById('prevPage'), nextPage: document.getElementById('nextPage'),
-  doorMult: document.getElementById('doorMult'), storeMargin: document.getElementById('storeMargin'), customerMargin: document.getElementById('customerMargin'),
-  resetFilters: document.getElementById('resetFilters'), collapseFilters: document.getElementById('collapseFilters'), hideFilters: document.getElementById('hideFilters'), showFilters: document.getElementById('showFilters'), refreshData: document.getElementById('refreshData')
-};
-function setDataStatus(msg, warn=false){ if(els.dataSourcePill){ els.dataSourcePill.textContent = msg; els.dataSourcePill.classList.toggle('warn', !!warn); els.dataSourcePill.classList.toggle('good', !warn); }}
-function clean(v){return (v??'').toString().trim();}
-function isHiddenFilterValue(v){const c=clean(v); return !c || HIDDEN_FILTER_VALUES.has(c) || HIDDEN_FILTER_VALUES.has(c.toLowerCase()) || /^special$/i.test(c);}
-function money(n){return Number.isFinite(n) ? n.toLocaleString(undefined,{style:'currency',currency:'USD'}) : '—';}
-function num(v,d){const n=parseFloat(v);return Number.isFinite(n)?n:d;}
-function safe(s){return clean(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function parseCurrency(v){
-  const n = parseFloat(clean(v).replace(/[$,]/g,''));
-  return Number.isFinite(n) ? n : 0;
-}
-function parseCsv(text){
-  const rows=[]; let row=[]; let cell=''; let inQuotes=false;
-  for(let i=0;i<text.length;i++){
-    const ch=text[i]; const next=text[i+1];
-    if(inQuotes){
-      if(ch==='"' && next==='"'){ cell+='"'; i++; }
-      else if(ch==='"'){ inQuotes=false; }
-      else { cell+=ch; }
-    } else {
-      if(ch==='"'){ inQuotes=true; }
-      else if(ch===','){ row.push(cell); cell=''; }
-      else if(ch==='\n'){
-        row.push(cell); rows.push(row); row=[]; cell='';
-      } else if(ch==='\r') {
-        // ignore; \n handles row boundary
-      } else { cell+=ch; }
-    }
-  }
-  row.push(cell); rows.push(row);
-  return rows.filter(r => r.some(c => clean(c) !== ''));
-}
-function normHeader(h){return clean(h).toLowerCase().replace(/[^a-z0-9]/g,'');}
-const FIELD_ALIASES = {
-  item:['itemnumber','item','odl','odlitemnumber'], category:['category'], family:['family','familyname'], size:['size'], width:['width'], height:['height'], refSize:['refsize'], listPrice:['listprice'],
-  bulkItem:['bulkitemnumbers','bulkitemnumber','bulkitem','bulkitemno','bulkitemnum'], bulkListPrice:['bulklistprices','bulklistprice'], bulkCaseSize:['bulkcasesizes','bulkcasesize'],
-  model:['model'], frameType:['frametype'], frameColor:['framecolor'], glassThickness:['glassthickness'], glassType:['glasstype'], igThickness:['igthickness'], igColor:['igcolor'],
-  type:['type'], brand:['originalbrand','brand'], productUrl:['producturl'], imageUrl:['imageurl'], imageMatch:['imagematch'], sizeSort:['sizesort'], frameSort:['framesort']
-};
-const NO_HEADER_SCHEMAS = [
-  ['item','category','family','size','width','height','refSize','listPrice','bulkItem','bulkListPrice','bulkCaseSize','model','frameType','frameColor','glassThickness','glassType','igThickness','igColor','type','brand','productUrl','imageUrl','imageMatch','sizeSort','frameSort'],
-  ['item','category','family','size','width','height','refSize','listPrice','doorShopPrice','storePrice','customerPrice','bulkItem','bulkListPrice','bulkCaseSize','model','frameType','frameColor','glassThickness','glassType','igThickness','igColor','type','brand','productUrl','imageUrl','imageMatch','sizeSort','frameSort'],
-  ['modelSuffix','listPrice','bulkItem','size','width','height','refSize','category','family','productUrl','bulkCaseSize','frameType','frameColor','glassThickness','glassType','igThickness','igColor','imageUrl','sizeSort','bulkListPrice','frameSort','type','item','model']
-];
-function rowToObj(row, schema){
-  const o={}; schema.forEach((f,i)=>{ if(f) o[f]=row[i] ?? ''; });
-  return normalizeRow(o);
-}
-function normalizeRow(o){
-  const modelBase = clean(o.model);
-  const modelSuffix = clean(o.modelSuffix);
-  const model = modelSuffix && modelBase && !modelBase.toLowerCase().includes(modelSuffix.toLowerCase()) ? `${modelBase} ${modelSuffix}` : modelBase;
-  return {
-    item: clean(o.item), category: clean(o.category), family: clean(o.family), size: clean(o.size),
-    width: parseFloat(clean(o.width).replace(/,/g,'')) || '', height: parseFloat(clean(o.height).replace(/,/g,'')) || '', refSize: clean(o.refSize),
-    listPrice: parseCurrency(o.listPrice), bulkItem: clean(o.bulkItem), bulkListPrice: clean(o.bulkListPrice), bulkCaseSize: clean(o.bulkCaseSize),
-    model, frameType: clean(o.frameType), frameColor: clean(o.frameColor), glassThickness: clean(o.glassThickness), glassType: clean(o.glassType),
-    igThickness: clean(o.igThickness), igColor: clean(o.igColor), type: clean(o.type), brand: clean(o.brand), productUrl: clean(o.productUrl), imageUrl: clean(o.imageUrl), imageMatch: clean(o.imageMatch),
-    sizeSort: parseFloat(clean(o.sizeSort).replace(/,/g,'')), frameSort: parseFloat(clean(o.frameSort).replace(/,/g,''))
-  };
-}
-function rowsFromHeader(parsed){
-  const header = parsed[0].map(normHeader);
-  const index={};
-  for(const [field, aliases] of Object.entries(FIELD_ALIASES)){
-    const i = header.findIndex(h => aliases.includes(h));
-    if(i>=0) index[field]=i;
-  }
-  if(index.item == null || index.listPrice == null) return null;
-  return parsed.slice(1).map(row => {
-    const o={}; Object.entries(index).forEach(([field,i])=>o[field]=row[i] ?? ''); return normalizeRow(o);
-  });
-}
-function rowsFromNoHeader(parsed){
-  const flat=[];
-  parsed.forEach(row => row.forEach(c => flat.push(c)));
-  let best=null;
-  for(const schema of NO_HEADER_SCHEMAS){
-    const n=schema.length; const rows=[];
-    for(let i=0;i+n<=flat.length;i+=n){ rows.push(rowToObj(flat.slice(i,i+n), schema)); }
-    const score=rows.reduce((acc,r)=> acc + (/^\d{5,8}$/.test(clean(r.item))?2:0) + (clean(r.category)?1:0) + (clean(r.family)?1:0) + (clean(r.model)?1:0), 0);
-    if(!best || score>best.score) best={rows, score, schema};
-  }
-  return (best?.rows || []).filter(r => clean(r.item));
-}
-function normalizeLiveRows(parsed){
-  const headerRows = rowsFromHeader(parsed);
-  let rows = headerRows && headerRows.length ? headerRows : rowsFromNoHeader(parsed);
-  const seen = new Set();
-  rows = rows.filter(r => {
-    if(!r.item) return false;
-    const key = [r.item,r.model,r.size,r.frameType,r.frameColor,r.listPrice,r.imageUrl].join('|');
-    if(seen.has(key)) return false; seen.add(key); return true;
-  });
-  return rows;
-}
-async function loadResourceImages(){
-  try{
-    const res = await fetch(RESOURCE_IMAGE_URL, {cache:'no-store'});
-    if(!res.ok) return [];
-    const text = await res.text();
-    return normalizeResourceRows(parseCsv(text));
-  } catch(err){ console.warn('Resource image CSV not loaded', err); return []; }
-}
-function normalizeResourceRows(parsed){
-  if(!parsed.length) return [];
-  const flat = [];
-  parsed.forEach(row => row.forEach(c => flat.push(c)));
-  const first = normHeader(flat[0] || '');
-  const second = normHeader(flat[1] || '');
-  const third = normHeader(flat[2] || '');
-  let triples = [];
-  if(first === 'type' && second === 'name' && third === 'imageurl'){
-    for(let i=3; i+2<flat.length; i+=3){
-      triples.push({type: clean(flat[i]), name: clean(flat[i+1]), imageUrl: clean(flat[i+2])});
-    }
-  } else {
-    const header = parsed[0].map(normHeader);
-    const looksHeader = header.some(h => ['type','name','imageurl'].includes(h));
-    const data = looksHeader ? parsed.slice(1) : parsed;
-    const idx = (names) => looksHeader ? header.findIndex(h => names.includes(h)) : -1;
-    const ixType = idx(['type']);
-    const ixName = idx(['name','label','title','resource','resourcename']);
-    const ixImage = idx(['imageurl','resourceimageurl','imgurl','url']);
-    triples = data.map(row => ({
-      type: clean(ixType>=0 ? row[ixType] : row[0]),
-      name: clean(ixName>=0 ? row[ixName] : row[1]),
-      imageUrl: clean(ixImage>=0 ? row[ixImage] : row.find(c => /^https?:\/\//i.test(clean(c))) || row[2] || '')
-    }));
-  }
-  return triples.map(x => {
-    const t = clean(x.type);
-    const field = /^ig$/i.test(t) ? 'igColor' : /^frame$/i.test(t) ? 'frameType' : t;
-    return {type:t, field, label:clean(x.name), value:clean(x.name), imageUrl:clean(x.imageUrl)};
-  }).filter(x => x.label && x.value && x.imageUrl);
-}
-async function loadLiveData(){
-  try{
-    setDataStatus('Data source: loading live CSV…', true);
-    els.grid.innerHTML = `<div class="empty">Loading live ODL data…</div>`;
-    const [res, resources] = await Promise.all([fetch(DATA_URL, {cache:'no-store'}), loadResourceImages()]);
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    RESOURCE_IMAGES = resources;
-    RAW_DATA = normalizeLiveRows(parseCsv(text));
-    DATA = RAW_DATA.filter(r => !/special/i.test(String(r.size || '')));
-    filtered = DATA.slice();
-    BULK_ITEM_SET = sameBulkItems();
-    currentPage = 1;
-    refreshDynamicFilters();
-    applyFilters();
-    setDataStatus(`Data source: live GitHub CSV • ${new Date().toLocaleString()}${RESOURCE_IMAGES.length ? ` • ${RESOURCE_IMAGES.length} resources` : ''}`);
-  } catch(err){
-    console.error(err);
-    RAW_DATA=[]; DATA=[]; filtered=[];
-    refreshDynamicFilters(); render();
-    setDataStatus(`Data source failed: ${err.message}`, true);
-    els.grid.innerHTML = `<div class="empty">Could not load the live CSV. Confirm the GitHub raw CSV is public and reachable, then use Refresh Data.</div>`;
-  }
-}
-function normalizePercent(v,d){const raw=num(v,d); return raw>1 ? raw/100 : raw;}
-function pricing(row){
-  const list = Number(row.listPrice);
-  if(!Number.isFinite(list)) return {door:null,store:null,customer:null};
-  const dm = num(els.doorMult.value, .504);
-  const sm = normalizePercent(els.storeMargin.value,30);
-  const cm = normalizePercent(els.customerMargin.value,25);
-  const door = list * dm;
-  const store = door / (1 - sm);
-  const customer = store / (1 - cm);
-  return {door,store,customer};
-}
-function activePrice(row){
-  const p = pricing(row);
-  return currentMode === 'door' ? p.door : currentMode === 'store' ? p.store : p.customer;
-}
-function sortFilteredRows(){
-  const sortBy = els.sortBy ? els.sortBy.value : 'default';
-  if(sortBy === 'priceAsc' || sortBy === 'priceDesc'){
-    const dir = sortBy === 'priceAsc' ? 1 : -1;
-    filtered.sort((a,b)=>{
-      const pa = activePrice(a); const pb = activePrice(b);
-      const av = Number.isFinite(pa) ? pa : Number.POSITIVE_INFINITY;
-      const bv = Number.isFinite(pb) ? pb : Number.POSITIVE_INFINITY;
-      return (av-bv)*dir || clean(a.family).localeCompare(clean(b.family),undefined,{numeric:true}) || clean(a.model).localeCompare(clean(b.model),undefined,{numeric:true}) || clean(a.item).localeCompare(clean(b.item),undefined,{numeric:true});
-    });
-  }
-}
-function groupKey(r){return [r.size,r.category,r.family,r.model].map(clean).join('||').toLowerCase();}
-function buildDisplayItems(){
-  if(!els.groupByModel || !els.groupByModel.checked){
-    return filtered.map(r => ({type:'row', row:r, rows:[r], count:1, price:activePrice(r)}));
-  }
-  const map = new Map();
-  filtered.forEach(r => {
-    const key = groupKey(r);
-    if(!map.has(key)) map.set(key, []);
-    map.get(key).push(r);
-  });
-  const items = [...map.values()].map(rows => {
-    const sorted = rows.slice().sort((a,b)=>{
-      const pa=activePrice(a), pb=activePrice(b);
-      const av=Number.isFinite(pa)?pa:Number.POSITIVE_INFINITY;
-      const bv=Number.isFinite(pb)?pb:Number.POSITIVE_INFINITY;
-      return (av-bv) || modelRowSort(a,b);
-    });
-    return {type:'group', row:sorted[0], rows:sorted, count:rows.length, price:activePrice(sorted[0])};
-  });
-  const sortBy = els.sortBy ? els.sortBy.value : 'default';
-  if(sortBy === 'priceAsc' || sortBy === 'priceDesc'){
-    const dir = sortBy === 'priceAsc' ? 1 : -1;
-    items.sort((a,b)=>{
-      const av=Number.isFinite(a.price)?a.price:Number.POSITIVE_INFINITY;
-      const bv=Number.isFinite(b.price)?b.price:Number.POSITIVE_INFINITY;
-      return (av-bv)*dir || clean(a.row.size).localeCompare(clean(b.row.size),undefined,{numeric:true}) || clean(a.row.family).localeCompare(clean(b.row.family),undefined,{numeric:true}) || clean(a.row.model).localeCompare(clean(b.row.model),undefined,{numeric:true});
-    });
-  } else {
-    items.sort((a,b)=>{
-      const as=Number(a.row.sizeSort), bs=Number(b.row.sizeSort);
-      const av=Number.isFinite(as)?as:Number.POSITIVE_INFINITY;
-      const bv=Number.isFinite(bs)?bs:Number.POSITIVE_INFINITY;
-      return (av-bv) || clean(a.row.category).localeCompare(clean(b.row.category),undefined,{numeric:true}) || clean(a.row.family).localeCompare(clean(b.row.family),undefined,{numeric:true}) || clean(a.row.model).localeCompare(clean(b.row.model),undefined,{numeric:true});
-    });
-  }
-  return items;
-}
-function startingPriceHtml(r, isGroup){
-  const html = priceHtml(r);
-  return isGroup ? html.replaceAll('<div class="lbl">Door Shop</div>','<div class="lbl">Door Shop</div>').replace('<div class="price-row">','<div class="group-note">Starting at</div><div class="price-row">') : html;
-}
-function rowText(r){return [r.item,r.category,r.family,r.size,r.model,r.frameType,r.frameColor,r.glassThickness,r.glassType,r.igThickness,r.igColor,r.bulkItem].map(clean).join(' ').toLowerCase();}
-function currentFilters(){const f = {}; FILTER_FIELDS.forEach(x => f[x.field] = els[x.id].value); return f;}
-function matchesRow(r, f, q, skipField=''){
-  if(q && !rowText(r).includes(q)) return false;
-  for(const k in f){ if(k===skipField) continue; if(f[k] && clean(r[k]) !== f[k]) return false; }
-  return true;
-}
-function sortValueForFilter(cfg, v, rows){
-  const matching = rows.filter(r => clean(r[cfg.field]) === v);
-  if(cfg.field === 'size'){
-    const sortVals = matching.map(r=>Number(r.sizeSort)).filter(Number.isFinite);
-    return sortVals.length ? Math.min(...sortVals) : Number.POSITIVE_INFINITY;
-  }
-  if(cfg.field === 'frameType'){
-    const sortVals = matching.map(r=>Number(r.frameSort)).filter(Number.isFinite);
-    return sortVals.length ? Math.min(...sortVals) : Number.POSITIVE_INFINITY;
-  }
-  return Number.POSITIVE_INFINITY;
-}
-function optionizeDynamic(cfg, rows){
-  const el = els[cfg.id]; const cur = el.value; const counts = new Map();
-  rows.forEach(r => { const v = clean(r[cfg.field]); if(isHiddenFilterValue(v)) return; counts.set(v, (counts.get(v)||0)+1); });
-  const values = [...counts.keys()].sort((a,b)=>{
-    const as = sortValueForFilter(cfg, a, rows); const bs = sortValueForFilter(cfg, b, rows);
-    return (as-bs) || a.localeCompare(b,undefined,{numeric:true});
-  });
-  el.innerHTML = `<option value="">All ${cfg.label}</option>` + values.map(v=>`<option value="${safe(v)}">${safe(v)} (${counts.get(v).toLocaleString()})</option>`).join('');
-  el.value = values.includes(cur) ? cur : '';
-}
-function refreshDynamicFilters(){const q = clean(els.q.value).toLowerCase(); const f = currentFilters(); FILTER_FIELDS.forEach(cfg => optionizeDynamic(cfg, DATA.filter(r => matchesRow(r, f, q, cfg.field))));}
-function applyFilters(){refreshDynamicFilters(); const q = clean(els.q.value).toLowerCase(); const f = currentFilters(); filtered = DATA.filter(r => matchesRow(r, f, q)); sortFilteredRows(); currentPage = 1; render();}
-function priceHtml(r){const p=pricing(r);return `<div class="price-row"><div class="price door"><div class="lbl">Door Shop</div><div class="amt">${money(p.door)}</div></div><div class="price store"><div class="lbl">Store</div><div class="amt">${money(p.store)}</div></div><div class="price customer"><div class="lbl">Customer</div><div class="amt">${money(p.customer)}</div></div></div>`;}
-function formatLine(parts, suffix){const base=parts.map(clean).filter(Boolean).join(' '); return base ? `${base}${suffix ? ` ${suffix}` : ''}` : '';}
-function imageHtml(r){if(r.imageUrl) return `<img src="${safe(r.imageUrl)}" alt="${safe(r.family)} ${safe(r.size)}" loading="lazy" onerror="this.replaceWith(makePlaceholder())"><span class="image-badge">ODL image</span>`; return `<div class="placeholder">Image<br>Coming Soon</div>`;}
-window.makePlaceholder = function(){const d=document.createElement('div'); d.className='placeholder'; d.innerHTML='Image<br>Coming Soon'; return d;}
-function syncGroupByModelUi(){
-  const grouped = !!els.groupByModel?.checked;
-  document.body.classList.toggle('group-model-active', grouped);
-  ['frameType','frameColor','glassType'].forEach(id=>{
-    const field = els[id];
-    const wrap = field?.closest('div');
-    if(wrap) wrap.style.display = grouped ? 'none' : '';
-    if(grouped && field) field.value = '';
-  });
-}
-function render(){
-  syncGroupByModelUi();
-  const storeMargin = num(els.storeMargin.value,30); const customerMargin = num(els.customerMargin.value,25);
-  els.pricingPill.textContent = `Door ${num(els.doorMult.value,.504).toFixed(3)} | Store Margin ${storeMargin.toFixed(1).replace('.0','')}% | Customer Margin ${customerMargin.toFixed(1).replace('.0','')}%`;
-  const displayItems = buildDisplayItems();
-  const displayCount = displayItems.length;
-  const rowCountText = els.groupByModel && els.groupByModel.checked ? `${displayCount.toLocaleString()} model group${displayCount===1?'':'s'} from ${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}` : `${filtered.length.toLocaleString()} result${filtered.length===1?'':'s'}`;
-  els.countPill.textContent = rowCountText;
-  const pageSize = parseInt(els.pageSize.value || '100', 10); const totalPages = Math.max(1, Math.ceil(displayCount / pageSize)); currentPage = Math.min(Math.max(1,currentPage), totalPages);
-  const start=(currentPage-1)*pageSize; const items=displayItems.slice(start,start+pageSize);
-  els.resultSummary.textContent = displayCount ? `Showing ${(start+1).toLocaleString()}-${(start+items.length).toLocaleString()} of ${displayCount.toLocaleString()} ${els.groupByModel?.checked?'groups':'matches'}` : `0 of ${DATA.length.toLocaleString()} glass items`;
-  els.viewSummary.textContent = `${currentMode==='door'?'Door Shop':currentMode==='store'?'Store':'Customer'} view | ${DATA.length.toLocaleString()} total glass items`;
-  els.pageInfo.textContent = `Page ${currentPage} of ${totalPages}`; els.prevPage.disabled=currentPage<=1; els.nextPage.disabled=currentPage>=totalPages;
-  if(!items.length){els.grid.innerHTML=`<div class="empty">No matching glass inserts found. Try Reset Filters to broaden the list.</div>`; return;}
-  els.grid.innerHTML = items.map((item,i)=>{
-    const r=item.row; const isGroup=item.type==='group'; const frameLine=formatLine([r.frameType,r.frameColor], 'Frame'); const glassLine=formatLine([r.glassThickness,r.glassType], 'Glass'); const igLine=formatLine([r.igThickness,r.igColor], 'IG');
-    return `<article class="card"><div class="imgbox" onclick="openModalByKey('${safe(rowKey(r))}')">${imageHtml(r)}</div><div class="card-body"><div class="topline"><div><div class="family">${safe(r.family||'Unnamed Glass')}</div>${!isGroup && frameLine?`<div class="meta">${safe(frameLine)}</div>`:''}${!isGroup && glassLine?`<div class="meta">${safe(glassLine)}</div>`:''}${!isGroup && igLine?`<div class="meta">${safe(igLine)}</div>`:''}</div><div class="odl">${isGroup ? `${item.count.toLocaleString()} Options` : `ODL# ${safe(r.item)}`}</div></div><div class="tags">${r.category?`<span class="tag cat">${safe(r.category)}</span>`:''}${r.size?`<span class="tag">${safe(r.size)}</span>`:''}${r.model?`<span class="tag">${safe(r.model)}</span>`:''}</div>${startingPriceHtml(r,isGroup)}<div class="actions"><button class="btn secondary" onclick="openModalByKey('${safe(rowKey(r))}')" type="button">${isGroup?'View Options':'Details'}</button></div></div></article>`;
-  }).join('');
-}
-function detail(label, value, cls=''){const v=clean(value); if(!v) return ''; return `<div class="detail ${cls}"><b>${safe(label)}</b><span>${safe(v)}</span></div>`;}
-function openModalByIndex(i){openModal(filtered[i]);}
-function rowKey(r){return [r.item,r.model,r.size,r.frameType,r.frameColor,r.glassThickness,r.glassType,r.listPrice,r.imageUrl].map(clean).join('||');}
-function sameBulkItems(){const s=new Set(); DATA.forEach(r => clean(r.bulkItem).split('|').map(x=>x.trim()).filter(Boolean).forEach(x=>s.add(x))); return s;}
-let BULK_ITEM_SET = new Set();
-function visiblePriceColumns(r){const p=pricing(r); if(currentMode==='door') return `<td>${money(p.door)}</td><td>${money(p.store)}</td><td>${money(p.customer)}</td>`; if(currentMode==='store') return `<td>${money(p.store)}</td><td>${money(p.customer)}</td>`; return `<td>${money(p.customer)}</td>`;}
-function visiblePriceHeaders(){if(currentMode==='door') return '<th>Door Shop</th><th>Store</th><th>Customer</th>'; if(currentMode==='store') return '<th>Store</th><th>Customer</th>'; return '<th>Customer</th>';}
-function getModelRows(r){
-  const modelKey = clean(r.model).toLowerCase();
-  if(!modelKey) return [];
-  return DATA.filter(x => clean(x.model).toLowerCase() === modelKey && !BULK_ITEM_SET.has(clean(x.item)))
-    .sort(modelRowSort);
-}
-
-function frameColorSortValue(v){const c=clean(v).toLowerCase(); return c === 'white' ? '000-white' : `100-${c}`;}
-function igColorSortValue(v){const c=clean(v).toLowerCase(); return c === 'white' ? '000-white' : `100-${c}`;}
-function modelRowSort(a,b){
-  const af = Number.isFinite(Number(a.frameSort)) ? Number(a.frameSort) : Number.POSITIVE_INFINITY;
-  const bf = Number.isFinite(Number(b.frameSort)) ? Number(b.frameSort) : Number.POSITIVE_INFINITY;
-  const pa = activePrice(a); const pb = activePrice(b);
-  const av = Number.isFinite(pa) ? pa : Number.POSITIVE_INFINITY;
-  const bv = Number.isFinite(pb) ? pb : Number.POSITIVE_INFINITY;
-  return (af-bf) || igColorSortValue(a.igColor).localeCompare(igColorSortValue(b.igColor),undefined,{numeric:true}) || (av-bv) || clean(a.frameColor).localeCompare(clean(b.frameColor),undefined,{numeric:true}) || clean(a.item).localeCompare(clean(b.item),undefined,{numeric:true});
-}
-function isNaturallyStainableFrameType(v){return ['zeel','keystone','spotlights','spotlight'].includes(clean(v).toLowerCase());}
-function passesStainableFilter(r){return clean(r.frameColor).toLowerCase() !== 'white' || isNaturallyStainableFrameType(r.frameType);}
-function uniqueSorted(rows, fn){return [...new Set(rows.map(fn).map(clean).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));}
-function modelIgValue(r){return formatLine([r.igThickness,r.igColor], '');}
-function sortedFrameTypes(rows){
-  return uniqueSorted(rows, x=>x.frameType).sort((a,b)=>{
-    const as = sortValueForFilter({field:'frameType'}, a, rows); const bs = sortValueForFilter({field:'frameType'}, b, rows);
-    return (as-bs) || a.localeCompare(b,undefined,{numeric:true});
-  });
-}
-function matchingResourceButtons(rows, field){
-  if(!RESOURCE_IMAGES.length) return [];
-  return RESOURCE_IMAGES.filter(res => clean(res.field).toLowerCase() === field.toLowerCase() && rows.some(r => resourceMatchesRow(res, r)));
-}
-function resourceMatchesRow(res, r){
-  const field = clean(res.field).toLowerCase().replace(/[^a-z0-9]/g,'');
-  const value = clean(res.value).toLowerCase();
-  if(!value) return false;
-  if(field === 'frametype' || field === 'frame') return clean(r.frameType).toLowerCase() === value;
-  if(field === 'igcolor' || field === 'ig') return clean(r.igColor).toLowerCase() === value;
-  return false;
-}
-function modelFilterControlsHtml(rows){
-  const frameButtons = matchingResourceButtons(rows, 'frameType');
-  const igButtons = matchingResourceButtons(rows, 'igColor');
-  const stainControl = rows.some(r => clean(r.frameColor).toLowerCase()==='white') ? `<label class="checkline"><input id="modelStainableFilter" type="checkbox" onchange="refreshModelTable()"> Stainable</label>` : '';
-  const makeButtons = (buttons, kind, title) => buttons.length ? `<div class="resource-filter-group"><div class="resource-filter-title">${title}</div><div class="resource-filter-row">${buttons.map((res,i)=>`<button type="button" class="resource-filter-btn" data-resource-kind="${kind}" data-resource-index="${i}" onclick="setModelResourceFilter('${kind}',${i})"><img src="${safe(res.imageUrl)}" alt="${safe(res.label)}" loading="lazy"><span>${safe(res.label)}</span></button>`).join('')}<button type="button" class="btn secondary tiny" onclick="setModelResourceFilter('${kind}','')">All ${title}</button></div></div>` : '';
-  window._currentModelFrameResources = frameButtons;
-  window._currentModelIgResources = igButtons;
-  return `${stainControl?`<div class="model-filter-row">${stainControl}</div>`:''}${makeButtons(frameButtons,'frame','Frame Type')}${makeButtons(igButtons,'ig','IG Color')}`;
-}
-function modelTableHtml(rows, r){
-  const showIg = rows.some(x => clean(x.igThickness) || clean(x.igColor));
-  const igHeader = showIg ? '<th>IG</th>' : '';
-  if(!rows.length) return `<div class="empty">No matching non-bulk items found for this model.</div>`;
-  return `<div class="similar-table-wrap"><table class="similar-table"><thead><tr><th>ODL #</th><th>Frame Type</th><th>Frame Color</th><th>Glass Type</th>${igHeader}${visiblePriceHeaders()}</tr></thead><tbody>${rows.map(x=>{
-    const isCurrent = clean(x.item) === clean(r.item) && clean(x.size) === clean(r.size) && clean(x.frameType) === clean(r.frameType) && clean(x.frameColor) === clean(r.frameColor) && Number(x.listPrice) === Number(r.listPrice);
-    const isSameItem = clean(x.item) === clean(r.item) && !isCurrent;
-    const cls = `${isCurrent?'current-model-row ':''}${isSameItem?'same-item-row':''}`.trim();
-    const glassValue = formatLine([x.glassThickness,x.glassType], '');
-    const igValue = modelIgValue(x);
-    return `<tr${cls?` class="${cls}"`:''}><td><button class="similar-link" onclick="openModalByKey('${safe(rowKey(x))}')">${safe(x.item)}</button>${isCurrent?`<br><span class="sub">Selected</span>`:isSameItem?`<br><span class="sub">Same ODL #</span>`:''}</td><td>${safe(x.frameType)}</td><td>${safe(x.frameColor)}</td><td>${safe(glassValue)}</td>${showIg?`<td>${safe(igValue)}</td>`:''}${visiblePriceColumns(x)}</tr>`;
-  }).join('')}</tbody></table></div>`;
-}
-let currentModelFrameResourceFilter = '';
-let currentModelIgResourceFilter = '';
-function setModelResourceFilter(kind, i){
-  if(kind === 'frame') currentModelFrameResourceFilter = i === '' ? '' : String(i);
-  if(kind === 'ig') currentModelIgResourceFilter = i === '' ? '' : String(i);
-  document.querySelectorAll('.resource-filter-btn').forEach(btn=>{
-    const active = btn.dataset.resourceKind === 'frame' ? btn.dataset.resourceIndex === currentModelFrameResourceFilter : btn.dataset.resourceIndex === currentModelIgResourceFilter;
-    btn.classList.toggle('active', active);
-  });
-  refreshModelTable();
-}
-function filteredModelRows(){
-  if(!currentModalRow) return [];
-  const rows = getModelRows(currentModalRow);
-  const stainable = !!document.getElementById('modelStainableFilter')?.checked;
-  const frameRes = currentModelFrameResourceFilter !== '' && window._currentModelFrameResources ? window._currentModelFrameResources[Number(currentModelFrameResourceFilter)] : null;
-  const igRes = currentModelIgResourceFilter !== '' && window._currentModelIgResources ? window._currentModelIgResources[Number(currentModelIgResourceFilter)] : null;
-  return rows.filter(x => (!stainable || passesStainableFilter(x)) && (!frameRes || resourceMatchesRow(frameRes,x)) && (!igRes || resourceMatchesRow(igRes,x))).sort(modelRowSort);
-}
-function refreshModelTable(){
-  const target = document.getElementById('modelTableTarget');
-  if(target && currentModalRow) target.innerHTML = modelTableHtml(filteredModelRows(), currentModalRow);
-}
-function modelItemsHtml(r){
-  currentModelFrameResourceFilter = ''; currentModelIgResourceFilter = '';
-  const modelKey = clean(r.model).toLowerCase();
-  if(!modelKey) return `<div class="empty">This item does not have a model value to compare against.</div>`;
-  const rows = getModelRows(r);
-  if(!rows.length) return `<div class="empty">No other non-bulk items found for this model.</div>`;
-  return `<p class="sub" style="margin:0 0 10px">All non-bulk items with model <b>${safe(r.model)}</b>, sorted by Frame Sort, IG Color, then visible price. The selected row is highlighted green; rows with the same ODL # are highlighted yellow.</p>${modelFilterControlsHtml(rows)}<div id="modelTableTarget">${modelTableHtml(rows, r)}</div>`;
-}
-function setActiveTab(tab){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab)); document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel===tab));}
-function openModalByItem(item){const r=DATA.find(x=>clean(x.item)===clean(item)); if(r) openModal(r);}
-function openModalByKey(key){const r=DATA.find(x=>rowKey(x)===key); if(r) openModal(r, {preserveModelFilters:true});}
-function openModal(r, opts={}){
-  if(!r) return;
-  const modalWasOpen = document.getElementById('modalBackdrop').style.display === 'flex';
-  const preserveModelFilters = !!opts.preserveModelFilters && modalWasOpen;
-  const savedFrameFilter = preserveModelFilters ? currentModelFrameResourceFilter : '';
-  const savedIgFilter = preserveModelFilters ? currentModelIgResourceFilter : '';
-  const savedStainable = preserveModelFilters ? !!document.getElementById('modelStainableFilter')?.checked : false;
-  currentModalItem = r.item; currentModalRow = r;
-  document.getElementById('modalTitle').textContent = `${r.family || 'ODL Glass'} — ODL# ${r.item}`;
-  document.getElementById('modalSub').textContent = [r.size, r.category, r.model].filter(Boolean).join(' | ');
-  const productLink = r.productUrl ? `<a class="link" href="${safe(r.productUrl)}" target="_blank" rel="noopener">Open ODL Product Page</a>` : '';
-  const img = r.imageUrl ? `<img src="${safe(r.imageUrl)}" alt="${safe(r.family)}" onerror="this.replaceWith(makePlaceholder())">` : `<div class="placeholder">Image<br>Coming Soon</div>`;
-  const groupedView = !!els.groupByModel?.checked;
-  const detailsTab = groupedView ? '' : `<button class="tab-btn" data-tab="details" onclick="setActiveTab('details')" type="button">Details</button>`;
-  const detailsPanel = groupedView ? '' : `<div class="tab-panel" data-panel="details"><div class="detail-grid">${detail('ODL Item Number', r.item)}${detail('List Price', money(Number(r.listPrice)), 'internal-only')}${detail('Family', r.family)}${detail('Category', r.category)}${detail('Size', r.size)}${detail('RefSize', r.refSize)}${detail('Width', r.width)}${detail('Height', r.height)}${detail('Frame Type', r.frameType)}${detail('Frame Color', r.frameColor)}${detail('Glass Thickness', r.glassThickness)}${detail('Glass Type', r.glassType)}${detail('IG Thickness', r.igThickness)}${detail('IG Color', r.igColor)}${detail('Model', r.model)}${detail('Type', r.type)}${detail('Original Brand', r.brand)}${detail('Bulk Item #', r.bulkItem, 'internal-only')}${detail('Bulk List Price', r.bulkListPrice, 'internal-only')}${detail('Bulk Case Size', r.bulkCaseSize, 'internal-only')}${detail('Image Match', r.imageMatch, 'internal-only')}</div><p style="margin-top:14px">${productLink}</p></div>`;
-  document.getElementById('modalContent').innerHTML = `<div class="modal-img">${img}</div><div><div class="modal-prices">${priceHtml(r)}</div><div class="tabs"><button class="tab-btn active" data-tab="model" onclick="setActiveTab('model')" type="button">Model</button>${detailsTab}</div><div class="tab-panel active" data-panel="model">${modelItemsHtml(r)}</div>${detailsPanel}</div>`;
-  if(preserveModelFilters){
-    currentModelFrameResourceFilter = savedFrameFilter;
-    currentModelIgResourceFilter = savedIgFilter;
-    const stainableInput = document.getElementById('modelStainableFilter');
-    if(stainableInput) stainableInput.checked = savedStainable;
-    document.querySelectorAll('.resource-filter-btn').forEach(btn=>{
-      const active = btn.dataset.resourceKind === 'frame' ? btn.dataset.resourceIndex === currentModelFrameResourceFilter : btn.dataset.resourceIndex === currentModelIgResourceFilter;
-      btn.classList.toggle('active', active);
-    });
-    refreshModelTable();
-  }
-  document.getElementById('modalBackdrop').style.display='flex';
-}
-function closeModal(){document.getElementById('modalBackdrop').style.display='none';}
-function setMode(mode){currentMode=mode; document.body.classList.remove('mode-door','mode-store','mode-customer'); document.body.classList.add(`mode-${mode}`); document.querySelectorAll('.mode button').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode)); render(); if(currentModalItem){const r=DATA.find(x=>x.item===currentModalItem); if(document.getElementById('modalBackdrop').style.display==='flex') openModal(currentModalRow || r);}}
-function setFiltersVisible(show){document.body.classList.toggle('filters-hidden', !show); els.showFilters.textContent = show ? 'Hide Filters' : 'Show Filters';}
-function resetFilters(){els.q.value=''; FILTER_FIELDS.forEach(cfg => els[cfg.id].value=''); currentPage=1; applyFilters();}
-function exportCsv(){const cols=['item','family','category','size','refSize','listPrice','frameType','frameColor','glassThickness','glassType','igThickness','igColor','model','bulkItem','bulkListPrice','bulkCaseSize','productUrl','imageUrl','sizeSort','frameSort']; const lines=[cols.join(',')]; filtered.forEach(r=>lines.push(cols.map(c=>`"${clean(r[c]).replace(/"/g,'""')}"`).join(','))); const blob=new Blob([lines.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='odl-glass-filtered.csv'; a.click(); URL.revokeObjectURL(a.href);}
-document.querySelectorAll('.mode button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-['q','size','category','family','model','frameType','frameColor','glassType'].forEach(id=>els[id].addEventListener('input',applyFilters));
-['doorMult','storeMargin','customerMargin'].forEach(id=>els[id].addEventListener('input',()=>{render(); if(currentModalItem && document.getElementById('modalBackdrop').style.display==='flex'){const r=DATA.find(x=>x.item===currentModalItem); if(r) openModal(r);}}));
-els.sortBy.addEventListener('change',()=>{currentPage=1;sortFilteredRows();render();}); if(els.groupByModel) els.groupByModel.addEventListener('change',()=>{currentPage=1;syncGroupByModelUi();applyFilters();}); els.pageSize.addEventListener('change',()=>{currentPage=1;render();}); els.prevPage.addEventListener('click',()=>{currentPage=Math.max(1,currentPage-1);render();window.scrollTo({top:0,behavior:'smooth'});}); els.nextPage.addEventListener('click',()=>{currentPage=currentPage+1;render();window.scrollTo({top:0,behavior:'smooth'});});
-document.getElementById('resetPricing').addEventListener('click',()=>{els.doorMult.value='0.504';els.storeMargin.value='30';els.customerMargin.value='25';render();});
-els.resetFilters.addEventListener('click',resetFilters); els.refreshData.addEventListener('click',loadLiveData); els.collapseFilters.addEventListener('click',()=>setFiltersVisible(false)); els.hideFilters.addEventListener('click',()=>setFiltersVisible(false)); els.showFilters.addEventListener('click',()=>setFiltersVisible(document.body.classList.contains('filters-hidden')));
-document.getElementById('exportCsv').addEventListener('click',exportCsv); document.getElementById('modalClose').addEventListener('click',closeModal); document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop') closeModal();}); document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+let RAW_DATA=[], RESOURCE_IMAGES=[], DATA=[], filtered=[], currentMode='store', currentPage=1, currentModalItem=null, currentModalRow=null;
+let currentModelFrameResourceFilter='', currentModelIgResourceFilter='', BULK_ITEM_SET=new Set();
+const FILTER_FIELDS=[{id:'size',field:'size',label:'Sizes'},{id:'category',field:'category',label:'Categories'},{id:'igColor',field:'igColor',label:'Blinds Colors',conditional:'blinds'},{id:'family',field:'family',label:'Families'},{id:'model',field:'model',label:'Models'},{id:'frameType',field:'frameType',label:'Frame Types'},{id:'frameColor',field:'frameColor',label:'Frame Colors'},{id:'glassType',field:'glassType',label:'Glass Types'}];
+const HIDDEN_FILTER_VALUES=new Set(['***DC***','see glass type for size','special']);
+const els={q:document.getElementById('q'),size:document.getElementById('size'),category:document.getElementById('category'),family:document.getElementById('family'),model:document.getElementById('model'),frameType:document.getElementById('frameType'),frameColor:document.getElementById('frameColor'),glassType:document.getElementById('glassType'),igColor:document.getElementById('igColor'),igColorFilterWrap:document.getElementById('igColorFilterWrap'),grid:document.getElementById('grid'),countPill:document.getElementById('countPill'),pricingPill:document.getElementById('pricingPill'),dataSourcePill:document.getElementById('dataSourcePill'),footerDataSource:document.getElementById('footerDataSource'),resultSummary:document.getElementById('resultSummary'),viewSummary:document.getElementById('viewSummary'),pageSize:document.getElementById('pageSize'),sortBy:document.getElementById('sortBy'),groupByModel:document.getElementById('groupByModel'),pageInfo:document.getElementById('pageInfo'),prevPage:document.getElementById('prevPage'),nextPage:document.getElementById('nextPage'),doorMult:document.getElementById('doorMult'),storeMargin:document.getElementById('storeMargin'),customerMargin:document.getElementById('customerMargin'),resetFilters:document.getElementById('resetFilters'),collapseFilters:document.getElementById('collapseFilters'),hideFilters:document.getElementById('hideFilters'),showFilters:document.getElementById('showFilters'),refreshData:document.getElementById('refreshData'),hideImpactRated:document.getElementById('hideImpactRated')};
+function clean(v){return (v??'').toString().trim()}function safe(s){return clean(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function num(v,d){const n=parseFloat(v);return Number.isFinite(n)?n:d}function money(n){return Number.isFinite(n)?n.toLocaleString(undefined,{style:'currency',currency:'USD'}):'—'}function parseCurrency(v){const n=parseFloat(clean(v).replace(/[$,]/g,''));return Number.isFinite(n)?n:0}function setDataStatus(msg,warn=false){if(els.dataSourcePill){els.dataSourcePill.textContent=msg;els.dataSourcePill.classList.toggle('warn',!!warn);els.dataSourcePill.classList.toggle('good',!warn)}if(els.footerDataSource)els.footerDataSource.textContent=msg}
+function isHiddenFilterValue(v){const c=clean(v);return !c||HIDDEN_FILTER_VALUES.has(c)||HIDDEN_FILTER_VALUES.has(c.toLowerCase())||/^special$/i.test(c)}function isGroupByModelActive(){return !!(els.groupByModel&&els.groupByModel.checked)}function hideImpactRatedActive(){return !!(els.hideImpactRated&&els.hideImpactRated.checked)}function isImpactRatedRow(r){return rowText(r).includes('keystone')||clean(r.frameType).toLowerCase().includes('keystone')}function passesGlobalRowRules(r){return !(hideImpactRatedActive()&&isImpactRatedRow(r))}function updateGroupModelUi(){const grouped=isGroupByModelActive();document.querySelectorAll('[data-product-filter]').forEach(el=>el.style.display=grouped?'none':'');if(grouped){['frameType','frameColor','glassType'].forEach(id=>{if(els[id])els[id].value=''})}const showBlinds=clean(els.category?.value).toLowerCase()==='blinds';if(els.igColorFilterWrap)els.igColorFilterWrap.style.display=showBlinds?'':'none';if(!showBlinds&&els.igColor)els.igColor.value=''}
+function parseCsv(text){const rows=[];let row=[],cell='',inQuotes=false;for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(inQuotes){if(ch==='"'&&next==='"'){cell+='"';i++}else if(ch==='"'){inQuotes=false}else cell+=ch}else{if(ch==='"')inQuotes=true;else if(ch===','){row.push(cell);cell=''}else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell=''}else if(ch==='\r'){}else cell+=ch}}row.push(cell);rows.push(row);return rows.filter(r=>r.some(c=>clean(c)!==''))}
+function normHeader(h){return clean(h).toLowerCase().replace(/[^a-z0-9]/g,'')}const FIELD_ALIASES={item:['itemnumber','item','odl','odlitemnumber'],category:['category'],family:['family','familyname'],size:['size'],width:['width'],height:['height'],refSize:['refsize'],listPrice:['listprice'],bulkItem:['bulkitemnumbers','bulkitemnumber','bulkitem','bulkitemno','bulkitemnum'],bulkListPrice:['bulklistprices','bulklistprice'],bulkCaseSize:['bulkcasesizes','bulkcasesize'],model:['model'],frameType:['frametype'],frameColor:['framecolor'],glassThickness:['glassthickness'],glassType:['glasstype','glass','combinedglasstype'],igThickness:['igthickness'],igColor:['igcolor','blindscolor','blindcolor'],type:['type'],brand:['originalbrand','brand'],productUrl:['producturl'],imageUrl:['imageurl'],imageMatch:['imagematch'],sizeSort:['sizesort'],frameSort:['framesort']};
+function normalizeRow(o){const modelBase=clean(o.model),modelSuffix=clean(o.modelSuffix),model=modelSuffix&&modelBase&&!modelBase.toLowerCase().includes(modelSuffix.toLowerCase())?`${modelBase} ${modelSuffix}`:modelBase;return{item:clean(o.item),category:clean(o.category),family:clean(o.family),size:clean(o.size),width:parseFloat(clean(o.width).replace(/,/g,''))||'',height:parseFloat(clean(o.height).replace(/,/g,''))||'',refSize:clean(o.refSize),listPrice:parseCurrency(o.listPrice),bulkItem:clean(o.bulkItem),bulkListPrice:clean(o.bulkListPrice),bulkCaseSize:clean(o.bulkCaseSize),model,frameType:clean(o.frameType),frameColor:clean(o.frameColor),glassThickness:clean(o.glassThickness),glassType:clean(o.glassType),igThickness:clean(o.igThickness),igColor:clean(o.igColor),type:clean(o.type),brand:clean(o.brand),productUrl:clean(o.productUrl),imageUrl:clean(o.imageUrl),imageMatch:clean(o.imageMatch),sizeSort:parseFloat(clean(o.sizeSort).replace(/,/g,'')),frameSort:parseFloat(clean(o.frameSort).replace(/,/g,''))}}
+function rowsFromHeader(parsed){const header=parsed[0].map(normHeader),index={};for(const[field,aliases]of Object.entries(FIELD_ALIASES)){const i=header.findIndex(h=>aliases.includes(h));if(i>=0)index[field]=i}if(index.item==null||index.listPrice==null)return null;return parsed.slice(1).map(row=>{const o={};Object.entries(index).forEach(([field,i])=>o[field]=row[i]??'');return normalizeRow(o)})}
+const NO_HEADER_SCHEMA=['item','category','family','size','width','height','refSize','listPrice','bulkItem','bulkListPrice','bulkCaseSize','model','frameType','frameColor','glassThickness','glassType','igThickness','igColor','type','brand','productUrl','imageUrl','imageMatch','sizeSort','frameSort'];
+function rowsFromNoHeader(parsed){const flat=[];parsed.forEach(r=>r.forEach(c=>flat.push(c)));const rows=[];for(let i=0;i+NO_HEADER_SCHEMA.length<=flat.length;i+=NO_HEADER_SCHEMA.length){const o={};NO_HEADER_SCHEMA.forEach((f,j)=>o[f]=flat[i+j]??'');rows.push(normalizeRow(o))}return rows.filter(r=>r.item)}
+function normalizeLiveRows(parsed){let rows=rowsFromHeader(parsed);if(!rows||!rows.length)rows=rowsFromNoHeader(parsed);const seen=new Set();return rows.filter(r=>{if(!r.item)return false;const key=[r.item,r.model,r.size,r.frameType,r.frameColor,r.listPrice,r.imageUrl].join('|');if(seen.has(key))return false;seen.add(key);return true})}
+function normalizeResourceRows(parsed){if(!parsed.length)return[];const flat=[];parsed.forEach(row=>row.forEach(c=>flat.push(c)));const first=normHeader(flat[0]||''),second=normHeader(flat[1]||''),third=normHeader(flat[2]||'');let triples=[];if(first==='type'&&second==='name'&&third==='imageurl'){for(let i=3;i+2<flat.length;i+=3)triples.push({type:clean(flat[i]),name:clean(flat[i+1]),imageUrl:clean(flat[i+2])})}else{const header=parsed[0].map(normHeader),looksHeader=header.some(h=>['type','name','imageurl'].includes(h)),data=looksHeader?parsed.slice(1):parsed,idx=names=>looksHeader?header.findIndex(h=>names.includes(h)):-1,ixType=idx(['type']),ixName=idx(['name','label','title','resource','resourcename']),ixImage=idx(['imageurl','resourceimageurl','imgurl','url']);triples=data.map(row=>({type:clean(ixType>=0?row[ixType]:row[0]),name:clean(ixName>=0?row[ixName]:row[1]),imageUrl:clean(ixImage>=0?row[ixImage]:row.find(c=>/^https?:\/\//i.test(clean(c)))||row[2]||'')}))}return triples.map(x=>{const t=clean(x.type);const field=/^ig$/i.test(t)?'igColor':/^frame$/i.test(t)?'frameType':t;return{type:t,field,label:clean(x.name),value:clean(x.name),imageUrl:clean(x.imageUrl)}}).filter(x=>x.label&&x.value&&x.imageUrl)}
+async function loadResourceImages(){try{const res=await fetch(RESOURCE_IMAGE_URL,{cache:'no-store'});if(!res.ok)return[];return normalizeResourceRows(parseCsv(await res.text()))}catch(e){console.warn('Resource image CSV not loaded',e);return[]}}
+async function loadLiveData(){try{setDataStatus('Data source: loading live CSV…',true);els.grid.innerHTML='<div class="empty">Loading live ODL data…</div>';const[res,resources]=await Promise.all([fetch(DATA_URL,{cache:'no-store'}),loadResourceImages()]);if(!res.ok)throw new Error(`HTTP ${res.status}`);RESOURCE_IMAGES=resources;RAW_DATA=normalizeLiveRows(parseCsv(await res.text()));DATA=RAW_DATA.filter(r=>!/special/i.test(String(r.size||'')));BULK_ITEM_SET=sameBulkItems();filtered=DATA.slice();currentPage=1;applyFilters();setDataStatus(`Data source: live GitHub CSV • ${new Date().toLocaleString()}${RESOURCE_IMAGES.length?` • ${RESOURCE_IMAGES.length} resources`:''}`)}catch(err){console.error(err);RAW_DATA=[];DATA=[];filtered=[];render();setDataStatus(`Data source failed: ${err.message}`,true);els.grid.innerHTML='<div class="empty">Could not load the live CSV. Confirm the GitHub raw CSV is public and reachable, then use Refresh Data.</div>'}}
+function normalizePercent(v,d){const raw=num(v,d);return raw>1?raw/100:raw}function pricing(row){const list=Number(row.listPrice);if(!Number.isFinite(list))return{door:null,store:null,customer:null};const door=list*num(els.doorMult.value,.504),store=door/(1-normalizePercent(els.storeMargin.value,30)),customer=store/(1-normalizePercent(els.customerMargin.value,25));return{door,store,customer}}function activePrice(row){const p=pricing(row);return currentMode==='door'?p.door:currentMode==='store'?p.store:p.customer}
+function rowText(r){return[r.item,r.category,r.family,r.size,r.model,r.frameType,r.frameColor,r.glassThickness,r.glassType,r.igThickness,r.igColor,r.bulkItem].map(clean).join(' ').toLowerCase()}function currentFilters(){const f={};FILTER_FIELDS.forEach(x=>f[x.field]=els[x.id].value);return f}function matchesRow(r,f,q,skipField=''){if(q&&!rowText(r).includes(q))return false;for(const k in f){if(k===skipField)continue;if(f[k]&&clean(r[k])!==f[k])return false}return true}
+function sortValueForFilter(cfg,v,rows){const matching=rows.filter(r=>clean(r[cfg.field])===v);if(cfg.field==='size'){const vals=matching.map(r=>Number(r.sizeSort)).filter(Number.isFinite);return vals.length?Math.min(...vals):Number.POSITIVE_INFINITY}if(cfg.field==='frameType'){const vals=matching.map(r=>Number(r.frameSort)).filter(Number.isFinite);return vals.length?Math.min(...vals):Number.POSITIVE_INFINITY}return Number.POSITIVE_INFINITY}
+function optionizeDynamic(cfg,rows){const el=els[cfg.id],cur=el.value,counts=new Map();rows.forEach(r=>{const v=clean(r[cfg.field]);if(isHiddenFilterValue(v))return;counts.set(v,(counts.get(v)||0)+1)});const values=[...counts.keys()].sort((a,b)=>sortValueForFilter(cfg,a,rows)-sortValueForFilter(cfg,b,rows)||a.localeCompare(b,undefined,{numeric:true}));el.innerHTML=`<option value="">All ${cfg.label}</option>`+values.map(v=>`<option value="${safe(v)}">${safe(v)} (${counts.get(v).toLocaleString()})</option>`).join('');el.value=values.includes(cur)?cur:''}
+function refreshDynamicFilters(){const q=clean(els.q.value).toLowerCase(),f=currentFilters(),baseRows=DATA.filter(r=>passesGlobalRowRules(r));FILTER_FIELDS.forEach(cfg=>optionizeDynamic(cfg,baseRows.filter(r=>matchesRow(r,f,q,cfg.field))))}function applyFilters(){updateGroupModelUi();refreshDynamicFilters();updateGroupModelUi();const q=clean(els.q.value).toLowerCase(),f=currentFilters();filtered=DATA.filter(r=>passesGlobalRowRules(r)&&matchesRow(r,f,q));sortFilteredRows();currentPage=1;render()}
+function sortFilteredRows(){const sortBy=els.sortBy.value;if(sortBy==='priceAsc'||sortBy==='priceDesc'){const dir=sortBy==='priceAsc'?1:-1;filtered.sort((a,b)=>{const av=Number.isFinite(activePrice(a))?activePrice(a):Number.POSITIVE_INFINITY,bv=Number.isFinite(activePrice(b))?activePrice(b):Number.POSITIVE_INFINITY;return(av-bv)*dir||clean(a.family).localeCompare(clean(b.family),undefined,{numeric:true})||clean(a.model).localeCompare(clean(b.model),undefined,{numeric:true})||clean(a.item).localeCompare(clean(b.item),undefined,{numeric:true})})}}
+function groupKey(r){return[r.size,r.category,r.family,r.model].map(clean).join('||').toLowerCase()}function buildDisplayItems(){if(!isGroupByModelActive())return filtered.map(r=>({type:'row',row:r,rows:[r],count:1,price:activePrice(r)}));const map=new Map();filtered.forEach(r=>{const key=groupKey(r);if(!map.has(key))map.set(key,[]);map.get(key).push(r)});const items=[...map.values()].map(rows=>{const sorted=rows.slice().sort(modelRowSort);return{type:'group',row:sorted[0],rows:sorted,count:rows.length,price:activePrice(sorted[0])}});const sortBy=els.sortBy.value;if(sortBy==='priceAsc'||sortBy==='priceDesc'){const dir=sortBy==='priceAsc'?1:-1;items.sort((a,b)=>(a.price-b.price)*dir||clean(a.row.size).localeCompare(clean(b.row.size),undefined,{numeric:true})||clean(a.row.family).localeCompare(clean(b.row.family),undefined,{numeric:true})||clean(a.row.model).localeCompare(clean(b.row.model),undefined,{numeric:true}))}else{items.sort((a,b)=>{const av=Number.isFinite(Number(a.row.sizeSort))?Number(a.row.sizeSort):Number.POSITIVE_INFINITY,bv=Number.isFinite(Number(b.row.sizeSort))?Number(b.row.sizeSort):Number.POSITIVE_INFINITY;return av-bv||clean(a.row.category).localeCompare(clean(b.row.category),undefined,{numeric:true})||clean(a.row.family).localeCompare(clean(b.row.family),undefined,{numeric:true})||clean(a.row.model).localeCompare(clean(b.row.model),undefined,{numeric:true})})}return items}
+function priceHtml(r){const p=pricing(r);return`<div class="price-row"><div class="price door"><div class="lbl">Door Shop</div><div class="amt">${money(p.door)}</div></div><div class="price store"><div class="lbl">Store</div><div class="amt">${money(p.store)}</div></div><div class="price customer"><div class="lbl">Customer</div><div class="amt">${money(p.customer)}</div></div></div>`}function startingPriceHtml(r,isGroup){return isGroup?`<div class="group-note">Starting at</div>${priceHtml(r)}`:priceHtml(r)}function formatLine(parts,suffix){const base=parts.map(clean).filter(Boolean).join(' ');return base?`${base}${suffix?` ${suffix}`:''}`:''}function imageHtml(r){return r.imageUrl?`<img src="${safe(r.imageUrl)}" alt="${safe(r.family)} ${safe(r.size)}" loading="lazy" onerror="this.replaceWith(makePlaceholder())"><span class="image-badge">ODL image</span>`:'<div class="placeholder">Image<br>Coming Soon</div>'}window.makePlaceholder=function(){const d=document.createElement('div');d.className='placeholder';d.innerHTML='Image<br>Coming Soon';return d}
+function render(){const sm=num(els.storeMargin.value,30),cm=num(els.customerMargin.value,25);if(els.pricingPill)els.pricingPill.textContent=`Door ${num(els.doorMult.value,.504).toFixed(3)} | Store Margin ${sm.toFixed(1).replace('.0','')}% | Customer Margin ${cm.toFixed(1).replace('.0','')}%`;const displayItems=buildDisplayItems(),displayCount=displayItems.length,rowCountText=isGroupByModelActive()?`${displayCount.toLocaleString()} model group${displayCount===1?'':'s'} from ${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}`:`${filtered.length.toLocaleString()} result${filtered.length===1?'':'s'}`;els.countPill.textContent=rowCountText;const pageSize=parseInt(els.pageSize.value||'100',10),totalPages=Math.max(1,Math.ceil(displayCount/pageSize));currentPage=Math.min(Math.max(1,currentPage),totalPages);const start=(currentPage-1)*pageSize,items=displayItems.slice(start,start+pageSize);els.resultSummary.textContent=displayCount?`Showing ${(start+1).toLocaleString()}-${(start+items.length).toLocaleString()} of ${displayCount.toLocaleString()} ${isGroupByModelActive()?'groups':'matches'}`:`0 of ${DATA.length.toLocaleString()} glass items`;els.viewSummary.textContent=`${currentMode==='door'?'Door Shop':currentMode==='store'?'Store':'Customer'} view | ${DATA.length.toLocaleString()} total glass items`;els.pageInfo.textContent=`Page ${currentPage} of ${totalPages}`;els.prevPage.disabled=currentPage<=1;els.nextPage.disabled=currentPage>=totalPages;if(!items.length){els.grid.innerHTML='<div class="empty">No matching glass inserts found. Try Reset Filters to broaden the list.</div>';return}els.grid.innerHTML=items.map(item=>{const r=item.row,isGroup=item.type==='group',grouped=isGroupByModelActive(),frameLine=formatLine([r.frameType,r.frameColor],'Frame'),glassLine=formatLine([r.glassThickness,r.glassType],'Glass'),igLine=formatLine([r.igThickness,r.igColor],'IG'),productSpecificHtml=grouped?'':`${frameLine?`<div class="meta">${safe(frameLine)}</div>`:''}${glassLine?`<div class="meta">${safe(glassLine)}</div>`:''}${igLine?`<div class="meta">${safe(igLine)}</div>`:''}`;return`<article class="card"><div class="imgbox" onclick="openModalByKey('${safe(rowKey(r))}')">${imageHtml(r)}</div><div class="card-body"><div class="topline"><div><div class="family">${safe(r.family||'Unnamed Glass')}</div>${productSpecificHtml}</div><div class="odl">${isGroup?`${item.count.toLocaleString()} Options`:`ODL# ${safe(r.item)}`}</div></div><div class="tags">${r.category?`<span class="tag cat">${safe(r.category)}</span>`:''}${r.size?`<span class="tag">${safe(r.size)}</span>`:''}${r.model?`<span class="tag">${safe(r.model)}</span>`:''}</div>${startingPriceHtml(r,isGroup)}<div class="actions"><button class="btn secondary" onclick="openModalByKey('${safe(rowKey(r))}')" type="button">${isGroup?'View Options':'Details'}</button></div></div></article>`}).join('')}
+function detail(label,value,cls=''){const v=clean(value);return v?`<div class="detail ${cls}"><b>${safe(label)}</b><span>${safe(v)}</span></div>`:''}function rowKey(r){return[r.item,r.model,r.size,r.frameType,r.frameColor,r.glassThickness,r.glassType,r.listPrice,r.imageUrl].map(clean).join('||')}function sameBulkItems(){const s=new Set();DATA.forEach(r=>clean(r.bulkItem).split('|').map(x=>x.trim()).filter(Boolean).forEach(x=>s.add(x)));return s}function visiblePriceHeaders(){return currentMode==='door'?`${sortHeader('Door Shop','door')}${sortHeader('Store','store')}${sortHeader('Customer','customer')}`:currentMode==='store'?`${sortHeader('Store','store')}${sortHeader('Customer','customer')}`:`${sortHeader('Customer','customer')}`}function visiblePriceColumns(r){const p=pricing(r);return currentMode==='door'?`<td>${money(p.door)}</td><td>${money(p.store)}</td><td>${money(p.customer)}</td>`:currentMode==='store'?`<td>${money(p.store)}</td><td>${money(p.customer)}</td>`:`<td>${money(p.customer)}</td>`}
+function modelIgValue(r){return formatLine([r.igThickness,r.igColor],'')}function frameColorSortValue(v){const c=clean(v).toLowerCase();return c==='white'?'000-white':`100-${c}`}function igColorSortValue(r){const c=clean(r.igColor||modelIgValue(r)).toLowerCase();return c==='white'?'000-white':`100-${c}`}function modelRowSort(a,b){const af=Number.isFinite(Number(a.frameSort))?Number(a.frameSort):Number.POSITIVE_INFINITY,bf=Number.isFinite(Number(b.frameSort))?Number(b.frameSort):Number.POSITIVE_INFINITY,pa=activePrice(a),pb=activePrice(b),av=Number.isFinite(pa)?pa:Number.POSITIVE_INFINITY,bv=Number.isFinite(pb)?pb:Number.POSITIVE_INFINITY;return af-bf||igColorSortValue(a).localeCompare(igColorSortValue(b),undefined,{numeric:true})||av-bv||frameColorSortValue(a.frameColor).localeCompare(frameColorSortValue(b.frameColor),undefined,{numeric:true})||clean(a.item).localeCompare(clean(b.item),undefined,{numeric:true})}
+function getModelRows(r){const modelKey=clean(r.model).toLowerCase();return modelKey?DATA.filter(x=>clean(x.model).toLowerCase()===modelKey&&!BULK_ITEM_SET.has(clean(x.item))&&passesGlobalRowRules(x)).sort(modelRowSort):[]}function isNaturallyStainableFrameType(v){return['zeel','keystone','spotlights','spotlight'].includes(clean(v).toLowerCase())}function passesStainableFilter(r){return clean(r.frameColor).toLowerCase()!=='white'||isNaturallyStainableFrameType(r.frameType)}function resourceMatchesRow(res,r){const field=clean(res.field).toLowerCase().replace(/[^a-z0-9]/g,''),value=clean(res.value).toLowerCase();if(!value)return false;if(field==='frametype'||field==='frame')return clean(r.frameType).toLowerCase()===value;if(field==='igcolor'||field==='ig')return clean(r.igColor).toLowerCase()===value;return false}function matchingResourceButtons(rows,field){return RESOURCE_IMAGES.filter(res=>clean(res.field).toLowerCase()===field.toLowerCase()&&rows.some(r=>resourceMatchesRow(res,r)))}
+function modelFilterControlsHtml(rows,preserveFilters=false){const frameButtons=matchingResourceButtons(rows,'frameType').sort((a,b)=>sortValueForFilter({field:'frameType'},a.value,rows)-sortValueForFilter({field:'frameType'},b.value,rows)||clean(a.value).localeCompare(clean(b.value),undefined,{numeric:true})),igButtons=matchingResourceButtons(rows,'igColor');window._currentModelFrameResources=frameButtons;window._currentModelIgResources=igButtons;if(!preserveFilters&&igButtons.length){const whiteIndex=igButtons.findIndex(res=>clean(res.value).toLowerCase()==='white');currentModelIgResourceFilter=whiteIndex>=0?String(whiteIndex):''}const stainControl=rows.some(r=>clean(r.frameColor).toLowerCase()==='white')?'<label class="checkline"><input id="modelStainableFilter" type="checkbox" onchange="refreshModelTable(true)"> Show Stainable options only</label>':'';const makeButtons=(buttons,kind,title)=>buttons.length?`<div class="resource-filter-group">${kind==='frame'?`<div class="resource-filter-heading"><div class="resource-filter-title">${title}</div><a class="frame-guide-link" href="https://www.odl.com/hubfs/ODL/ODL%20Files/Frame%20Buyers%20Guide.pdf" target="_blank" rel="noopener">Frame Buyer's Guide</a></div>`:`<div class="resource-filter-title">${title}</div>`}<div class="resource-filter-row">${buttons.map((res,i)=>`<button type="button" class="resource-filter-btn" data-resource-kind="${kind}" data-resource-index="${i}" onclick="setModelResourceFilter('${kind}',${i})"><img src="${safe(res.imageUrl)}" alt="${safe(res.label)}" loading="lazy"><span>${safe(res.label)}</span>${kind==='frame'?`<span class="hover-preview"><img src="${safe(res.imageUrl)}" alt="${safe(res.label)} preview" loading="lazy"><span class="hover-title">${safe(res.label)}</span><span class="hover-note">Preview • See Frame Buyer's Guide for details</span></span>`:''}</button>`).join('')}<button type="button" class="btn secondary tiny" onclick="setModelResourceFilter('${kind}','')">All ${title}</button></div></div>`:'';return`${makeButtons(frameButtons,'frame','Frame Type')}${makeButtons(igButtons,'ig','IG Color')}${stainControl}`}
+function updateModelResourceButtonStates(){document.querySelectorAll('.resource-filter-btn').forEach(btn=>{const active=btn.dataset.resourceKind==='frame'?btn.dataset.resourceIndex===currentModelFrameResourceFilter:btn.dataset.resourceIndex===currentModelIgResourceFilter;btn.classList.toggle('active',active)})}
+function setModelResourceFilter(kind,i){if(kind==='frame')currentModelFrameResourceFilter=i===''?'':String(i);if(kind==='ig')currentModelIgResourceFilter=i===''?'':String(i);updateModelResourceButtonStates();refreshModelTable(true)}function modelSortValue(r,key){const p=pricing(r);const glassValue=formatLine([r.glassThickness,r.glassType],'');const igValue=modelIgValue(r);const map={item:clean(r.item),frameType:clean(r.frameType),frameColor:clean(r.frameColor),glassType:glassValue,ig:igValue,door:p.door,store:p.store,customer:p.customer,price:activePrice(r)};return map[key]??''}
+function applyModelSort(rows){if(currentModelSortKey==='default')return rows.slice().sort(modelRowSort);const dir=currentModelSortDir==='desc'?-1:1;return rows.slice().sort((a,b)=>{const av=modelSortValue(a,currentModelSortKey),bv=modelSortValue(b,currentModelSortKey);const an=Number(av),bn=Number(bv);if(Number.isFinite(an)&&Number.isFinite(bn))return (an-bn)*dir||modelRowSort(a,b);return clean(av).localeCompare(clean(bv),undefined,{numeric:true,sensitivity:'base'})*dir||modelRowSort(a,b)})}
+function setModelSort(key){if(currentModelSortKey===key){currentModelSortDir=currentModelSortDir==='asc'?'desc':'asc'}else{currentModelSortKey=key;currentModelSortDir='asc'}refreshModelTable()}
+function sortHeader(label,key){const active=currentModelSortKey===key,mark=active?(currentModelSortDir==='asc'?'▲':'▼'):'';return `<th class="sortable-th" onclick="setModelSort('${key}')">${label}${mark?`<span class="sort-mark">${mark}</span>`:''}</th>`}
+function filteredModelRows(){if(!currentModalRow)return[];const rows=getModelRows(currentModalRow),stainable=!!document.getElementById('modelStainableFilter')?.checked,frameRes=currentModelFrameResourceFilter!==''&&window._currentModelFrameResources?window._currentModelFrameResources[Number(currentModelFrameResourceFilter)]:null,igRes=currentModelIgResourceFilter!==''&&window._currentModelIgResources?window._currentModelIgResources[Number(currentModelIgResourceFilter)]:null;return applyModelSort(rows.filter(x=>(!stainable||passesStainableFilter(x))&&(!frameRes||resourceMatchesRow(frameRes,x))&&(!igRes||resourceMatchesRow(igRes,x))))}
+function updateModalPreview(row){if(!row)return;const titleEl=document.getElementById('modalTitle'),subEl=document.getElementById('modalSub'),imgEl=document.getElementById('modalImageSlot'),linkEl=document.getElementById('modalProductLink');if(titleEl)titleEl.textContent=`${row.family||'ODL Glass'} — ODL# ${row.item}`;if(subEl)subEl.textContent=[row.size,row.category,row.model].filter(Boolean).join(' | ');if(imgEl)imgEl.innerHTML=row.imageUrl?`<img src="${safe(row.imageUrl)}" alt="${safe(row.family)}" onerror="this.replaceWith(makePlaceholder())">`:'<div class="placeholder">Image<br>Coming Soon</div>';if(linkEl)linkEl.innerHTML=row.productUrl?`<a class="link" href="${safe(row.productUrl)}" target="_blank" rel="noopener">Open ODL Product Page</a>`:''}function refreshModelTable(forceFirst=false){const target=document.getElementById('modelTableTarget');if(target&&currentModalRow){const rows=filteredModelRows();if(rows.length){const currentKey=rowKey(currentModalRow);if(forceFirst||!rows.some(x=>rowKey(x)===currentKey))currentModalRow=rows[0];updateModalPreview(currentModalRow)}target.innerHTML=modelTableHtml(rows,currentModalRow)}}
+function modelTableHtml(rows,r){rows=rows.filter(x=>passesGlobalRowRules(x));const showIg=rows.some(x=>clean(x.igThickness)||clean(x.igColor)),igHeader=showIg?sortHeader('IG','ig'):'';if(!rows.length)return'<div class="empty">No matching non-bulk items found for this model.</div>';return`<div class="similar-table-wrap"><table class="similar-table"><thead><tr>${sortHeader('ODL #','item')}${sortHeader('Frame Type','frameType')}${sortHeader('Frame Color','frameColor')}${sortHeader('Glass Type','glassType')}${igHeader}${visiblePriceHeaders()}</tr></thead><tbody>${rows.map(x=>{const isCurrent=clean(x.item)===clean(r.item)&&clean(x.size)===clean(r.size)&&clean(x.frameType)===clean(r.frameType)&&clean(x.frameColor)===clean(r.frameColor)&&Number(x.listPrice)===Number(r.listPrice),isSameItem=clean(x.item)===clean(r.item)&&!isCurrent,cls=`${isCurrent?'current-model-row ':''}${isSameItem?'same-item-row':''}`.trim(),glassValue=formatLine([x.glassThickness,x.glassType],''),igValue=modelIgValue(x);return`<tr${cls?` class="${cls}"`:''}><td><button class="similar-link" onclick="openModalByKey('${safe(rowKey(x))}')">${safe(x.item)}</button>${isCurrent?'<br><span class="muted">Selected</span>':isSameItem?'<br><span class="muted">Same ODL #</span>':''}</td><td>${safe(x.frameType)}</td><td>${safe(x.frameColor)}</td><td>${safe(glassValue)}</td>${showIg?`<td>${safe(igValue)}</td>`:''}${visiblePriceColumns(x)}</tr>`}).join('')}</tbody></table></div>`}
+function modelItemsHtml(r,preserveFilters=false){if(!preserveFilters){currentModelFrameResourceFilter='';currentModelIgResourceFilter='';currentModelSortKey='default';currentModelSortDir='asc'}if(!clean(r.model))return'<div class="empty">This item does not have a model value to compare against.</div>';const rows=getModelRows(r);if(!rows.length)return'<div class="empty">No other non-bulk items found for this model.</div>';const controlsHtml=modelFilterControlsHtml(rows,preserveFilters),initialRows=filteredModelRows();if(initialRows.length){if(isGroupByModelActive())currentModalRow=preserveFilters&&initialRows.some(x=>rowKey(x)===rowKey(r))?r:initialRows[0];else currentModalRow=initialRows.some(x=>rowKey(x)===rowKey(r))?r:initialRows[0];}return`${controlsHtml}<div id="modelTableTarget">${modelTableHtml(initialRows.length?initialRows:rows,currentModalRow)}</div>`}
+function setActiveTab(tab){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tab))}function openModalByKey(key){const r=DATA.find(x=>rowKey(x)===key);if(r)openModal(r,{preserveModelFilters:document.getElementById('modalBackdrop').style.display==='flex'})}
+function openModal(r,opts={}){if(!r)return;const preserveModelFilters=!!opts.preserveModelFilters,wasStainable=!!document.getElementById('modelStainableFilter')?.checked,grouped=isGroupByModelActive();currentModalItem=r.item;currentModalRow=r;document.getElementById('modalTitle').textContent=`${r.family||'ODL Glass'} — ODL# ${r.item}`;document.getElementById('modalSub').textContent=[r.size,r.category,r.model].filter(Boolean).join(' | ');const productLink=r.productUrl?`<a class="link" href="${safe(r.productUrl)}" target="_blank" rel="noopener">Open ODL Product Page</a>`:'',img=r.imageUrl?`<img src="${safe(r.imageUrl)}" alt="${safe(r.family)}" onerror="this.replaceWith(makePlaceholder())">`:'<div class="placeholder">Image<br>Coming Soon</div>',showDetails=!grouped,modelTabBtn=`<button class="tab-btn ${grouped?'active':''}" data-tab="model" onclick="setActiveTab('model')" type="button">Model</button>`,detailsTab=showDetails?`<button class="tab-btn ${!grouped?'active':''}" data-tab="details" onclick="setActiveTab('details')" type="button">Details</button>`:'',detailsPanel=showDetails?`<div class="tab-panel ${!grouped?'active':''}" data-panel="details"><div class="modal-prices">${priceHtml(r)}</div><div class="detail-grid">${detail('ODL Item Number',r.item)}${detail('List Price',money(Number(r.listPrice)),'internal-only')}${detail('Family',r.family)}${detail('Category',r.category)}${detail('Size',r.size)}${detail('RefSize',r.refSize)}${detail('Width',r.width)}${detail('Height',r.height)}${detail('Frame Type',r.frameType)}${detail('Frame Color',r.frameColor)}${detail('Glass Thickness',r.glassThickness)}${detail('Glass Type',r.glassType)}${detail('IG Thickness',r.igThickness)}${detail('IG Color',r.igColor)}${detail('Model',r.model)}${detail('Type',r.type)}${detail('Original Brand',r.brand)}${detail('Bulk Item #',r.bulkItem,'internal-only')}${detail('Bulk List Price',r.bulkListPrice,'internal-only')}${detail('Bulk Case Size',r.bulkCaseSize,'internal-only')}${detail('Image Match',r.imageMatch,'internal-only')}</div><p style="margin-top:14px">${productLink}</p></div>`:'',modelPanelClass=grouped?'active':'';document.getElementById('modalContent').innerHTML=`<div class="modal-left"><div class="modal-img" id="modalImageSlot">${img}</div><div class="modal-side-links" id="modalProductLink">${productLink}</div></div><div><div class="modal-tools"><button class="btn secondary tiny modal-print-btn" onclick="printModalSheet()" type="button">Print Sheet</button></div><div class="tabs">${modelTabBtn}${detailsTab}</div><div class="tab-panel ${grouped?'active':''}" data-panel="model">${modelItemsHtml(r,preserveModelFilters)}</div>${detailsPanel}</div>`;const stainEl=document.getElementById('modelStainableFilter');updateModelResourceButtonStates();if(grouped&&preserveModelFilters&&stainEl){stainEl.checked=wasStainable;refreshModelTable(false)}else{currentModalRow=r;updateModalPreview(currentModalRow)}if(showDetails)setActiveTab('details');updateModelResourceButtonStates();document.getElementById('modalBackdrop').style.display='flex'}function closeModal(){document.getElementById('modalBackdrop').style.display='none'}
+function printModalSheet(){document.body.classList.add('print-modal');setTimeout(()=>window.print(),50)}window.addEventListener('afterprint',()=>document.body.classList.remove('print-modal'))
+function setMode(mode){currentMode=mode;document.body.classList.remove('mode-door','mode-store','mode-customer');document.body.classList.add(`mode-${mode}`);document.querySelectorAll('.mode button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));render();if(currentModalItem&&document.getElementById('modalBackdrop').style.display==='flex')openModal(currentModalRow,{preserveModelFilters:true})}function setFiltersVisible(show){document.body.classList.toggle('filters-hidden',!show);els.showFilters.textContent=show?'Hide Filters':'Show Filters'}function resetFilters(){els.q.value='';FILTER_FIELDS.forEach(cfg=>els[cfg.id].value='');currentPage=1;applyFilters()}function exportCsv(){const cols=['item','family','category','size','refSize','listPrice','frameType','frameColor','glassThickness','glassType','igThickness','igColor','model','bulkItem','bulkListPrice','bulkCaseSize','productUrl','imageUrl','sizeSort','frameSort'],lines=[cols.join(',')];filtered.forEach(r=>lines.push(cols.map(c=>`"${clean(r[c]).replace(/"/g,'""')}"`).join(',')));const blob=new Blob([lines.join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='odl-glass-filtered.csv';a.click();URL.revokeObjectURL(a.href)}
+document.querySelectorAll('.mode button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));let filterDebounceTimer=null;function scheduleApplyFilters(){clearTimeout(filterDebounceTimer);filterDebounceTimer=setTimeout(applyFilters,1000)}els.q.addEventListener('input',scheduleApplyFilters);['size','category','igColor','family','model','frameType','frameColor','glassType'].forEach(id=>els[id]&&els[id].addEventListener('input',applyFilters));['doorMult','storeMargin','customerMargin'].forEach(id=>els[id].addEventListener('input',()=>{render();if(currentModalItem&&document.getElementById('modalBackdrop').style.display==='flex')openModal(currentModalRow,{preserveModelFilters:true})}));els.sortBy.addEventListener('change',()=>{currentPage=1;sortFilteredRows();render()});els.groupByModel.addEventListener('change',()=>{currentPage=1;applyFilters();if(currentModalItem&&document.getElementById('modalBackdrop').style.display==='flex')openModal(currentModalRow)});if(els.hideImpactRated)els.hideImpactRated.addEventListener('change',()=>{currentPage=1;applyFilters();if(currentModalItem&&document.getElementById('modalBackdrop').style.display==='flex')openModal(currentModalRow)});els.pageSize.addEventListener('change',()=>{currentPage=1;render()});els.prevPage.addEventListener('click',()=>{currentPage=Math.max(1,currentPage-1);render();window.scrollTo({top:0,behavior:'smooth'})});els.nextPage.addEventListener('click',()=>{currentPage=currentPage+1;render();window.scrollTo({top:0,behavior:'smooth'})});document.getElementById('resetPricing').addEventListener('click',()=>{els.doorMult.value='0.504';els.storeMargin.value='30';els.customerMargin.value='25';render()});els.resetFilters.addEventListener('click',resetFilters);els.refreshData.addEventListener('click',loadLiveData);els.collapseFilters.addEventListener('click',()=>setFiltersVisible(false));els.hideFilters.addEventListener('click',()=>setFiltersVisible(false));els.showFilters.addEventListener('click',()=>setFiltersVisible(document.body.classList.contains('filters-hidden')));document.getElementById('exportCsv').addEventListener('click',exportCsv);document.getElementById('modalClose').addEventListener('click',closeModal);document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 loadLiveData();
 </script>
 </body>

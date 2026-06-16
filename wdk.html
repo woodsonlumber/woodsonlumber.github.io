@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Door Configurator</title>
+  <style>
+    :root {
+      --maroon: #6b0016;
+      --maroon-soft: #fff1f4;
+      --maroon-soft-2: #fff6f8;
+      --border: #dbe1ea;
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: #ffffff;
+      --soft: #f1f5f9;
+      --jamb: #ead9b8;
+      --jamb-line: #b99f74;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+    button, select, textarea { font: inherit; }
+    .page { max-width: 1500px; margin: 0 auto; padding: 28px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 24px; }
+    .pill { display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 12px; background: white; color: var(--maroon); font-size: 13px; font-weight: 800; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08); margin-bottom: 8px; }
+    h1 { margin: 0; font-size: 36px; line-height: 1.1; }
+    p { margin: 0; }
+    .subtext { color: var(--muted); margin-top: 8px; max-width: 760px; }
+    .steps { background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 12px; margin-bottom: 24px; overflow-x: auto; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05); }
+    .step-row { display: flex; gap: 8px; min-width: max-content; }
+    .step-tab { border: 0; border-radius: 14px; padding: 12px 16px; white-space: nowrap; cursor: pointer; font-weight: 700; color: #475569; background: var(--soft); }
+    .step-tab.active { background: var(--maroon); color: white; }
+    .step-tab.complete { background: var(--maroon-soft); color: var(--maroon); }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 22px; box-shadow: 0 1px 5px rgba(15, 23, 42, 0.05); }
+    .main-card { min-height: 620px; padding: 24px; }
+    .right-rail { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 20px; }
+    .section-head { margin-bottom: 24px; }
+    .step-meta { color: var(--maroon); text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; font-weight: 900; }
+    h2 { margin: 4px 0 8px; font-size: 28px; }
+    h3 { margin: 0 0 12px; font-size: 16px; }
+    .helper { color: var(--muted); }
+    .block { margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .option { width: 100%; text-align: left; border: 1px solid var(--border); background: white; border-radius: 18px; padding: 16px; cursor: pointer; transition: 0.15s; min-height: 86px; display: flex; justify-content: space-between; gap: 12px; }
+    .option:hover, .style-card:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08); }
+    .option.active { border-color: var(--maroon); background: var(--maroon-soft-2); }
+    .option-title { font-weight: 800; }
+    .option-note { color: var(--muted); font-size: 13px; margin-top: 5px; }
+    .check { color: var(--maroon); font-weight: 900; }
+    select { width: 100%; padding: 14px 16px; border-radius: 16px; border: 1px solid #cbd5e1; background: white; outline: none; }
+    .message { border-radius: 18px; background: var(--soft); padding: 16px; color: var(--muted); font-size: 14px; }
+    .locked { border: 1px solid var(--maroon); background: var(--maroon-soft-2); border-radius: 18px; padding: 16px; }
+    .locked-title { font-weight: 900; }
+    .group-label { text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-size: 12px; font-weight: 900; margin-bottom: 12px; }
+    .style-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .style-card { border: 1px solid var(--border); background: white; border-radius: 18px; overflow: hidden; text-align: left; cursor: pointer; transition: 0.15s; }
+    .style-card.active { border-color: var(--maroon); background: var(--maroon-soft-2); }
+    .style-img { aspect-ratio: 1; background: var(--soft); display: flex; align-items: center; justify-content: center; }
+    .style-img img { width: 100%; height: 100%; object-fit: contain; }
+    .style-label { padding: 12px; display: flex; justify-content: space-between; gap: 8px; font-weight: 800; }
+    .footer-actions { border-top: 1px solid #e2e8f0; margin-top: 28px; padding-top: 20px; display: flex; justify-content: space-between; }
+    .btn { border: 1px solid #cbd5e1; border-radius: 16px; padding: 10px 16px; font-weight: 800; cursor: pointer; background: var(--maroon); color: white; }
+    .btn.outline { background: white; color: var(--text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .preview-card, .price-card { padding: 18px; }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .card-title { font-size: 20px; font-weight: 900; }
+    .mini-pill { background: var(--soft); border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 800; color: #475569; }
+    .preview-stage { background: var(--soft); border-radius: 18px; padding: 22px; }
+    .overall-label { text-align: center; font-weight: 900; color: #334155; margin-bottom: 12px; font-size: 14px; min-height: 20px; }
+    .preview-hint { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 12px; min-height: 18px; }
+    .door-wrap { min-height: 500px; display: flex; justify-content: center; align-items: center; overflow: visible; padding: 32px 70px 20px 40px; }
+    .unit-box { position: relative; flex: 0 0 auto; }
+    .unit-width-label { position: absolute; left: 0; right: 0; top: -28px; text-align: center; font-size: 12px; color: var(--muted); font-weight: 900; }
+    .unit-height-label { position: absolute; top: 50%; right: -58px; transform: translateY(-50%) rotate(90deg); transform-origin: center; font-size: 12px; color: var(--muted); font-weight: 900; white-space: nowrap; }
+    .unit-shell { position: relative; width: 100%; height: 100%; }
+    .jamb-wrap { position: absolute; inset: 0; }
+    .jamb-top, .jamb-left, .jamb-right { position: absolute; background: linear-gradient(#f2e6cf, var(--jamb)); border: 1px solid var(--jamb-line); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35); }
+    .jamb-top { top: 0; left: 0; right: 0; }
+    .jamb-left { top: 0; left: 0; bottom: 0; }
+    .jamb-right { top: 0; right: 0; bottom: 0; }
+    .leaf-row { position: absolute; display: flex; align-items: stretch; justify-content: center; gap: 0; }
+    .leaf { position: relative; flex: 0 0 auto; border: 1px solid #475569; background: white; }
+    .leaf.double-left { border-right: 0; }
+    .leaf.bypass-second { margin-left: -18%; margin-top: 7%; opacity: 0.96; z-index: 3; }
+    .leaf-inner { position: relative; width: 100%; height: 100%; background: white; overflow: hidden; }
+    .leaf-inner img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .blank-door { position: relative; width: 100%; height: 100%; background: linear-gradient(#ffffff, #f8fafc); }
+    .blank-door::after { content: ""; position: absolute; inset: 4%; border: 1px solid #e2e8f0; background: linear-gradient(#ffffff, #f1f5f9); }
+    .fold-line { position: absolute; top: 3%; bottom: 3%; left: 50%; border-left: 2px dashed #64748b; z-index: 5; }
+    .bore { position: absolute; border-radius: 999px; border: 1px solid #1e293b; background: white; box-shadow: 0 1px 5px rgba(15, 23, 42, 0.25); z-index: 8; }
+    .ball-catch { position: absolute; width: 14px; height: 8px; border-radius: 999px; border: 1px solid #475569; background: #fff8df; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18); top: 6px; z-index: 9; }
+    .price-box { background: #020617; color: white; border-radius: 18px; padding: 18px; margin-top: 12px; }
+    .price-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #cbd5e1; font-weight: 900; }
+    .price-value { font-size: 34px; font-weight: 900; margin-top: 4px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .summary-item { background: var(--soft); border-radius: 14px; padding: 12px; }
+    .summary-label { text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; color: var(--muted); font-weight: 900; }
+    .summary-value { margin-top: 4px; font-weight: 800; }
+    textarea { width: 100%; min-height: 110px; resize: vertical; border: 1px solid #cbd5e1; border-radius: 18px; padding: 14px; outline: none; }
+    pre { background: #020617; color: #e2e8f0; border-radius: 18px; padding: 16px; overflow: auto; font-size: 12px; }
+
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: 1fr; }
+      .right-rail { position: static; }
+    }
+    @media (max-width: 720px) {
+      .page { padding: 16px; }
+      .header { align-items: flex-start; flex-direction: column; }
+      .grid, .grid.two, .grid.four, .style-grid, .summary-grid { grid-template-columns: 1fr; }
+      .unit-height-label { display: none; }
+      .door-wrap { min-height: 430px; padding: 28px 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const MOLDED_BASE = "https://jhejl10.github.io/Doors/Molded";
+    const MDF_BASE = "https://jhejl10.github.io/Doors/MDF";
+    const useOptions = [
+      { id: "interior", label: "Interior", note: "Standard interior door applications." },
+      { id: "house-to-garage", label: "House-to-Garage", note: "Between living area and garage." },
+    ];
+    const allUnitTypes = [
+      { id: "single-prehung", label: "Single Prehung", previewCount: 1, needsJamb: true, needsHanding: true, needsBore: true, needsHinges: true, allowedUses: ["interior", "house-to-garage"] },
+      { id: "single-slab", label: "Single Slab", previewCount: 1, needsJamb: false, needsHanding: false, needsBore: false, needsHinges: false, allowedUses: ["interior", "house-to-garage"] },
+      { id: "double-prehung", label: "Double Prehung", previewCount: 2, needsJamb: true, needsHanding: true, needsBore: true, needsHinges: true, allowedUses: ["interior"] },
+      { id: "bifold", label: "Bifold", previewCount: 2, needsJamb: false, needsHanding: false, needsBore: false, needsHinges: false, allowedUses: ["interior"] },
+      { id: "bypass", label: "Bypass / Closet Pair", previewCount: 2, needsJamb: false, needsHanding: false, needsBore: false, needsHinges: false, allowedUses: ["interior"] },
+    ];
+    const seriesOptions = [
+      { id: "molded", label: "Molded", note: "Molded composite skins." },
+      { id: "flush", label: "Flush", note: "Flat slab construction." },
+      { id: "stile-rail", label: "Stile and Rail", note: "Stile-and-rail construction." },
+    ];
+    const widthOptions = [
+      { id: "30", label: '30 (36")' },
+      { id: "2T", label: '2T (34")' },
+      { id: "28", label: '28 (32")' },
+      { id: "26", label: '26 (30")' },
+      { id: "24", label: '24 (28")' },
+      { id: "22", label: '22 (26")' },
+      { id: "20", label: '20 (24")' },
+      { id: "1T", label: '1T (22")' },
+      { id: "18", label: '18 (20")' },
+      { id: "16", label: '16 (18")' },
+      { id: "14", label: '14 (16")' },
+      { id: "12", label: '12 (14")' },
+      { id: "10", label: '10 (12")' },
+    ];
+    const heightOptions = [
+      { id: "68", label: '68 (80")' },
+      { id: "70", label: '70 (84")' },
+      { id: "80", label: '80 (96")' },
+    ];
+    const thicknesses = ['1-3/8"', '1-3/4"'];
+    const stevesMoldedStyles = [
+      { id: "birkdale", label: "Birkdale", folder: "Birkdale" },
+      { id: "caiman", label: "Caiman", folder: "Caiman" },
+      { id: "camden", label: "Camden", folder: "Camden" },
+      { id: "carrara", label: "Carrara", folder: "Carrara" },
+      { id: "colonist-sm", label: "Colonist Smooth", folder: "ColonistSM" },
+      { id: "colonist-txt", label: "Colonist Textured", folder: "ColonistTXT" },
+      { id: "conmore", label: "Conmore", folder: "Conmore" },
+      { id: "coventry", label: "Coventry", folder: "Coventry" },
+      { id: "craftsman", label: "Craftsman", folder: "Craftsman" },
+      { id: "madison", label: "Madison", folder: "Madison" },
+      { id: "monroe", label: "Monroe", folder: "Monroe" },
+      { id: "rockport", label: "Rockport", folder: "Rockport" },
+      { id: "santa-fe", label: "Santa Fe", folder: "SantaFe" },
+    ].map(x => ({ ...x, family: "steves", defaultImage: `${MOLDED_BASE}/${x.folder}/default.png` }));
+    const masoniteMoldedStyles = [
+      { id: "bayshore", label: "Bayshore", folder: "Bayshore" },
+      { id: "cheyenne", label: "Cheyenne", folder: "Cheyenne" },
+      { id: "lincoln-park", label: "Lincoln Park", folder: "LincolnPark" },
+      { id: "logan", label: "Logan", folder: "Logan" },
+      { id: "riverside", label: "Riverside", folder: "Riverside" },
+      { id: "winslow", label: "Winslow", folder: "Winslow" },
+    ].map(x => ({ ...x, family: "masonite", defaultImage: `${MOLDED_BASE}/${x.folder}/default.png` }));
+    const allMoldedStyles = [...stevesMoldedStyles, ...masoniteMoldedStyles];
+    const flushStyles = [{ id: "flush", label: "Flush", folder: "", defaultImage: "" }];
+    const stileRailStyles = [
+      { id: "1p", label: "1 Panel", folder: "1P", defaultImage: `${MDF_BASE}/1P/default.png` },
+      { id: "2p", label: "2 Panel", folder: "2P", defaultImage: `${MDF_BASE}/2P/default.png` },
+      { id: "3p", label: "3 Panel", folder: "3P", defaultImage: `${MDF_BASE}/3P/default.png` },
+      { id: "3pc", label: "3 Panel Craftsman", folder: "3PC", defaultImage: `${MDF_BASE}/3PC/default.png` },
+      { id: "5p", label: "5 Panel", folder: "5P", defaultImage: `${MDF_BASE}/5P/default.png` },
+      { id: "6p", label: "6 Panel", folder: "6P", defaultImage: `${MDF_BASE}/6P/default.png` },
+    ];
+    const materialOptionsBySeries = {
+      molded: [{ id: "molded", label: "Molded", note: "Only material for molded series." }],
+      flush: [
+        { id: "hardboard", label: "Hardboard", note: "Typical flush hardboard construction." },
+        { id: "birch", label: "Birch", note: "Birch flush slab." },
+        { id: "luan", label: "Lauan", note: "Lauan flush slab." },
+        { id: "mdf", label: "MDF", note: "MDF flush slab." },
+      ],
+      "stile-rail": [
+        { id: "mdf", label: "MDF", note: "Uses your MDF image library." },
+        { id: "wood", label: "Wood", note: "Placeholder until wood families/species are defined." },
+      ],
+    };
+    const coreOptionsBySeries = {
+      molded: [
+        { id: "hollow", label: "Hollow Core", note: "Lightweight molded interior door." },
+        { id: "solid", label: "Solid Core", note: "Heavier feel and better sound reduction." },
+      ],
+      flush: [
+        { id: "hollow", label: "Hollow Core", note: "Common economy flush option." },
+        { id: "solid", label: "Solid Core", note: "Heavier feel and improved sound control." },
+      ],
+    };
+    const jambSizes = ['4-9/16"', '5-1/4"', '6-9/16"', '7-1/4"', "Custom"];
+    const jambMaterials = ["Primed Finger-Joint Pine", "MDF", "Clear Pine", "PVC / Composite", "Custom"];
+    const interiorHandingOptions = ["Left Hand", "Right Hand"];
+    const houseToGarageHandingOptions = ["Left Hand", "Right Hand", "Left Hand Outswing", "Right Hand Outswing"];
+    const slabPrepOptions = [
+      { id: "yes", label: "Yes", note: "Slab will be prepped for hardware." },
+      { id: "no", label: "No", note: "No slab prep needed." },
+    ];
+    const defaultConfig = {
+      brand: "JELD-WEN", use: "", unitType: "", series: "", width: "", height: "", thickness: "",
+      style: "", material: "", core: "", jambSize: "", jambMaterial: "", slabPrep: "",
+      handing: "", bore: "", hingeType: "", hingeFinish: "", notes: "",
+    };
+    const state = { step: 0, config: { ...defaultConfig } };
+
+    function escapeHtml(value) {
+      return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+    function widthCallToInches(callSize) {
+      if (!callSize || callSize.length < 2) return 0;
+      const feet = Number(callSize[0]); const inchChar = callSize[1]; const inches = inchChar === "T" ? 10 : Number(inchChar);
+      return feet * 12 + inches;
+    }
+    function heightCallToInches(callSize) {
+      const map = { "68": 80, "70": 84, "80": 96 };
+      return map[callSize] || 0;
+    }
+    function sizeCode(width, height) { return width && height ? `${width}${height}` : ""; }
+    function prettySize(width, height) {
+      if (!width || !height) return "Not selected";
+      return `${width}${height} (${widthCallToInches(width)}" x ${heightCallToInches(height)}")`;
+    }
+    function isSlabUnit(unitType) { return unitType === "single-slab"; }
+    function isDoubleUnit(unitType) { return unitType === "double-prehung"; }
+    function labelFrom(list, id) { return list.find(x => x.id === id)?.label || ""; }
+    function getAvailableUnitTypes() { if (!state.config.use) return []; return allUnitTypes.filter(x => x.allowedUses.includes(state.config.use)); }
+    function getSelectedUnit() { return getAvailableUnitTypes().find(x => x.id === state.config.unitType) || null; }
+    function getActiveStyles() {
+      if (state.config.series === "molded") return allMoldedStyles;
+      if (state.config.series === "flush") return flushStyles;
+      if (state.config.series === "stile-rail") return stileRailStyles;
+      return [];
+    }
+    function getSelectedStyle() { return getActiveStyles().find(x => x.id === state.config.style) || null; }
+    function getMaterialLabel() { return (materialOptionsBySeries[state.config.series] || []).find(x => x.id === state.config.material)?.label || ""; }
+    function getCoreLabel() { return (coreOptionsBySeries[state.config.series] || []).find(x => x.id === state.config.core)?.label || ""; }
+    function showCore() { return state.config.series === "molded" || state.config.series === "flush"; }
+    function getHandingOptions() { return state.config.use === "house-to-garage" ? houseToGarageHandingOptions : interiorHandingOptions; }
+    function getBoreOptions() { const options = ["No Bore","Single Bore","Double Bore"]; if (state.config.unitType === "double-prehung") options.push("No Bore with Ball Catch"); return options; }
+    function getHingeTypeOptions() { const options = ["Standard","Ball Bearing","Spring Hinge"]; if (String(state.config.handing).includes("Outswing")) options.push("Non-Removable Pin Hinge"); return options; }
+    function usesJambInPreview() { return ["single-prehung","double-prehung","bifold","bypass"].includes(state.config.unitType); }
+    function hasActualSizeSelected() { return Boolean(state.config.width && state.config.height); }
+    function getPreviewGeometry() {
+      const unit = getSelectedUnit();
+      const slabWidth = widthCallToInches(state.config.width) || 36;
+      const slabHeight = heightCallToInches(state.config.height) || 80;
+      const leafCount = unit?.previewCount || 1;
+      const overallWidth = leafCount === 2 ? slabWidth * 2 : slabWidth;
+      const overallHeight = slabHeight;
+      const maxPreviewWidth = 520;
+      const maxPreviewHeight = 460;
+      const scale = Math.min(maxPreviewWidth / overallWidth, maxPreviewHeight / overallHeight);
+      const jambPx = usesJambInPreview() ? Math.max(10, Math.round(0.9 * scale)) : 0;
+      return {
+        slabWidth, slabHeight, leafCount, overallWidth, overallHeight, scale, jambPx,
+        renderedLeafWidth: Math.round(slabWidth * scale),
+        renderedLeafHeight: Math.round(slabHeight * scale),
+        renderedOpeningWidth: Math.round(overallWidth * scale),
+        renderedOpeningHeight: Math.round(overallHeight * scale),
+        renderedUnitWidth: Math.round(overallWidth * scale) + (jambPx * 2),
+        renderedUnitHeight: Math.round(overallHeight * scale) + jambPx,
+      };
+    }
+    function getPreviewCandidates() {
+      const selectedStyle = getSelectedStyle();
+      const code = sizeCode(state.config.width, state.config.height);
+      if (!selectedStyle) return [];
+      if (state.config.series === "molded") {
+        return [code ? `${MOLDED_BASE}/${selectedStyle.folder}/${code}.png` : null, `${MOLDED_BASE}/${selectedStyle.folder}/default.png`].filter(Boolean);
+      }
+      if (state.config.series === "stile-rail" && selectedStyle.folder) {
+        return [code ? `${MDF_BASE}/${selectedStyle.folder}/${code}.png` : null, `${MDF_BASE}/${selectedStyle.folder}/default.png`].filter(Boolean);
+      }
+      return selectedStyle.defaultImage ? [selectedStyle.defaultImage] : [];
+    }
+    function getSteps() {
+      const unit = getSelectedUnit();
+      const steps = [
+        { id: "product", title: "Product", helper: "Choose Use first, then Type." },
+        { id: "size", title: "Size", helper: "Choose width, height, and thickness." },
+        { id: "style", title: "Series / Style / Material / Core", helper: "Choose the series first, then complete the remaining door selections." },
+      ];
+      if (unit?.needsJamb) steps.push({ id: "jamb", title: "Jamb", helper: "Prehung units need jamb size and jamb material." });
+      if (unit?.needsHanding || unit?.needsBore || isSlabUnit(state.config.unitType)) steps.push({ id: "prep", title: "Slab Prep / Handing / Bore", helper: "Choose slab prep for slabs, plus handing and lock prep where applicable." });
+      if (unit?.needsHinges) steps.push({ id: "hinges", title: "Hinges", helper: "Choose hinge type." });
+      steps.push({ id: "review", title: "Review", helper: "Confirm the final configuration." });
+      return steps;
+    }
+    function isStepComplete(stepId) {
+      const unit = getSelectedUnit();
+      switch (stepId) {
+        case "product": return Boolean(state.config.use && state.config.unitType);
+        case "size": return Boolean(state.config.width && state.config.height && state.config.thickness);
+        case "style":
+          if (state.config.series === "molded") return Boolean(state.config.series && state.config.style && state.config.material === "molded" && state.config.core);
+          if (state.config.series === "flush") return Boolean(state.config.series === "flush" && state.config.style === "flush" && state.config.material && state.config.core);
+          if (state.config.series === "stile-rail") return Boolean(state.config.series && state.config.style && state.config.material);
+          return false;
+        case "jamb": return Boolean(state.config.jambSize && state.config.jambMaterial);
+        case "prep":
+          if (isSlabUnit(state.config.unitType)) {
+            if (!state.config.slabPrep) return false;
+            if (state.config.slabPrep === "no") return true;
+            return Boolean(state.config.handing && state.config.bore);
+          }
+          return Boolean((unit?.needsHanding ? state.config.handing : true) && (unit?.needsBore ? state.config.bore : true));
+        case "hinges": return Boolean(state.config.hingeType);
+        case "review": return true;
+        default: return true;
+      }
+    }
+    function normalizeDependentSelections() {
+      if (state.config.series === "molded") state.config.material = "molded";
+      if (state.config.series === "flush") state.config.style = "flush";
+      if (!String(state.config.handing).includes("Outswing") && state.config.hingeType === "Non-Removable Pin Hinge") state.config.hingeType = "";
+      if (state.config.unitType !== "double-prehung" && state.config.bore === "No Bore with Ball Catch") state.config.bore = "";
+    }
+    function update(key, value) {
+      const previous = { ...state.config };
+      state.config[key] = value;
+      if (key === "use") {
+        state.config.unitType = ""; state.config.series = ""; state.config.style = ""; state.config.material = ""; state.config.core = "";
+        state.config.jambSize = ""; state.config.jambMaterial = ""; state.config.slabPrep = ""; state.config.handing = ""; state.config.bore = "";
+        state.config.hingeType = ""; state.config.hingeFinish = "";
+      }
+      if (key === "unitType") {
+        state.config.series = ""; state.config.style = ""; state.config.material = ""; state.config.core = "";
+        state.config.jambSize = ""; state.config.jambMaterial = ""; state.config.slabPrep = ""; state.config.handing = ""; state.config.bore = "";
+        state.config.hingeType = ""; state.config.hingeFinish = "";
+      }
+      if (key === "series") {
+        state.config.style = ""; state.config.material = ""; state.config.core = "";
+        if (value === "molded") state.config.material = "molded";
+        if (value === "flush") state.config.style = "flush";
+      }
+      if (key === "material") {
+        if (previous.series === "molded") state.config.material = "molded";
+        if (previous.series === "flush") state.config.style = "flush";
+      }
+      if (key === "slabPrep" && value === "no") { state.config.handing = ""; state.config.bore = ""; }
+      if (key === "handing" && !String(value).includes("Outswing") && state.config.hingeType === "Non-Removable Pin Hinge") state.config.hingeType = "";
+      normalizeDependentSelections();
+      clampStep();
+      render();
+    }
+    function setStep(index) { state.step = index; clampStep(); render(); }
+    function clampStep() { const steps = getSteps(); if (state.step > steps.length - 1) state.step = steps.length - 1; }
+    function reset() { state.step = 0; state.config = { ...defaultConfig }; render(); }
+    function optionGrid(options, value, key, cols = "") {
+      return `<div class="grid ${cols}">${options.map(option => {
+        const id = typeof option === "string" ? option : option.id;
+        const label = typeof option === "string" ? option : option.label;
+        const note = typeof option === "string" ? "" : (option.note || "");
+        const active = value === id || value === label;
+        return `<button class="option ${active ? "active" : ""}" onclick="update('${key}', '${escapeHtml(id || label)}')"><div><div class="option-title">${escapeHtml(label)}</div>${note ? `<div class="option-note">${escapeHtml(note)}</div>` : ""}</div>${active ? `<div class="check">✓</div>` : ""}</button>`;
+      }).join("")}</div>`;
+    }
+    function styleCard(style) {
+      const active = state.config.style === style.id;
+      return `<button class="style-card ${active ? "active" : ""}" onclick="update('style', '${escapeHtml(style.id)}')"><div class="style-img">${style.defaultImage ? `<img src="${escapeHtml(style.defaultImage)}" alt="${escapeHtml(style.label)}" onerror="this.style.display='none'">` : `<div class="option-note">No Default Image</div>`}</div><div class="style-label"><span>${escapeHtml(style.label)}</span>${active ? `<span class="check">✓</span>` : ""}</div></button>`;
+    }
+    function nextImage(img) {
+      const candidates = JSON.parse(img.dataset.candidates || "[]");
+      let index = Number(img.dataset.index || "0") + 1;
+      if (index >= candidates.length) { img.parentElement.innerHTML = `<div class="blank-door"></div>`; return; }
+      img.dataset.index = String(index);
+      img.src = candidates[index];
+    }
+    window.nextImage = nextImage; window.update = update; window.setStep = setStep; window.reset = reset;
+    function getSingleBoreSide(handing) {
+      const isLeft = String(handing).includes("Left");
+      const outswing = String(handing).includes("Outswing");
+      if (outswing) return isLeft ? "right" : "left";
+      return isLeft ? "left" : "right";
+    }
+    function getDoubleActiveLeaf(handing) {
+      const isLeft = String(handing).includes("Left");
+      const outswing = String(handing).includes("Outswing");
+      if (outswing) return isLeft ? "right" : "left";
+      return isLeft ? "left" : "right";
+    }
+    function boreMarkers(index, geometry) {
+      const isBifold = state.config.unitType === "bifold";
+      const isBypass = state.config.unitType === "bypass";
+      const isDouble = isDoubleUnit(state.config.unitType);
+      const isSlab = isSlabUnit(state.config.unitType);
+      const slabPrepEnabled = !isSlab || state.config.slabPrep === "yes";
+      const boreType = state.config.bore;
+      if (!slabPrepEnabled || !boreType || isBifold || isBypass) return "";
+      const backsetPx = Math.max(8, Math.round(2.375 * geometry.scale));
+      const boreDiameterPx = Math.max(10, Math.round(2.125 * geometry.scale));
+      const knobBottomPx = Math.round(36 * geometry.scale);
+      const deadboltBottomPx = Math.round((36 + 5.5) * geometry.scale);
+      if (boreType === "No Bore") return "";
+      if (boreType === "No Bore with Ball Catch" && state.config.unitType !== "double-prehung") return "";
+      let activeLeafIndex = 0;
+      let side = getSingleBoreSide(state.config.handing);
+      if (isDouble) {
+        const activeLeaf = getDoubleActiveLeaf(state.config.handing);
+        activeLeafIndex = activeLeaf === "left" ? 0 : 1;
+        side = activeLeaf === "left" ? "right" : "left";
+      }
+      if (isDouble && index !== activeLeafIndex) return "";
+      if (boreType === "No Bore with Ball Catch") {
+        const centerX = side === "left" ? `${Math.max(8, Math.round(geometry.renderedLeafWidth * 0.30))}px` : `${Math.max(8, Math.round(geometry.renderedLeafWidth * 0.70))}px`;
+        return `<div class="ball-catch" style="left: calc(${centerX} - 7px);"></div>`;
+      }
+      const horizontalProp = side === "left" ? "left" : "right";
+      const horizontalValue = `${backsetPx}px`;
+      let html = `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${knobBottomPx}px; width:${boreDiameterPx}px; height:${boreDiameterPx}px;" title="2-1/8&quot; bore, 2-3/8&quot; backset, 36&quot; centerline from slab base"></div>`;
+      if (boreType === "Double Bore") html += `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${deadboltBottomPx}px; width:${boreDiameterPx}px; height:${boreDiameterPx}px;" title="2-1/8&quot; bore, 2-3/8&quot; backset, upper prep"></div>`;
+      return html;
+    }
+    function previewLeaf(index, geometry) {
+      const candidates = getPreviewCandidates();
+      const candidatesJson = escapeHtml(JSON.stringify(candidates));
+      const isBifold = state.config.unitType === "bifold";
+      const isBypass = state.config.unitType === "bypass";
+      const isDouble = isDoubleUnit(state.config.unitType);
+      const leafClasses = ["leaf", isDouble && index === 0 ? "double-left" : "", isBypass && index === 1 ? "bypass-second" : ""].join(" ");
+      return `<div class="${leafClasses}" style="width:${geometry.renderedLeafWidth}px; height:${geometry.renderedLeafHeight}px;"><div class="leaf-inner">${candidates.length ? `<img src="${escapeHtml(candidates[0])}" data-candidates="${candidatesJson}" data-index="0" onerror="nextImage(this)" alt="Door preview">` : `<div class="blank-door"></div>`}${isBifold ? `<div class="fold-line"></div>` : ""}${boreMarkers(index, geometry)}</div></div>`;
+    }
+    function livePreview() {
+      const unit = getSelectedUnit();
+      const geometry = getPreviewGeometry();
+      const showLabels = hasActualSizeSelected();
+      const openingStyle = `left:${geometry.jambPx}px; top:${geometry.jambPx}px; width:${geometry.renderedOpeningWidth}px; height:${geometry.renderedOpeningHeight}px;`;
+      return `<div class="card preview-card"><div class="card-title-row"><div class="card-title">Live Preview</div>${unit?.label ? `<div class="mini-pill">${escapeHtml(unit.label)}</div>` : ""}</div><div class="preview-stage"><div class="overall-label">${showLabels ? `Overall Unit: ${geometry.overallWidth}" W x ${geometry.overallHeight}" H` : ""}</div><div class="preview-hint">${showLabels ? "" : "Select width and height to display the actual unit size."}</div><div class="door-wrap"><div class="unit-box" style="width:${geometry.renderedUnitWidth}px; height:${geometry.renderedUnitHeight}px;">${showLabels ? `<div class="unit-width-label">${geometry.overallWidth}" Overall Width</div>` : ""}${showLabels ? `<div class="unit-height-label">${geometry.overallHeight}" Height</div>` : ""}<div class="unit-shell">${usesJambInPreview() ? `<div class="jamb-wrap"><div class="jamb-top" style="height:${geometry.jambPx}px;"></div><div class="jamb-left" style="width:${geometry.jambPx}px;"></div><div class="jamb-right" style="width:${geometry.jambPx}px;"></div></div>` : ""}<div class="leaf-row" style="${openingStyle}">${Array.from({ length: geometry.leafCount }).map((_, index) => previewLeaf(index, geometry)).join("")}</div></div></div></div></div></div>`;
+    }
+    function livePrice() {
+      const ready = Boolean(state.config.series && state.config.width && state.config.height && state.config.thickness && state.config.style);
+      return `<div class="card price-card"><div class="card-title">Live Price</div><div class="price-box"><div class="price-label">Estimated price</div><div class="price-value">—</div></div><p class="subtext" style="font-size:14px;">${ready ? "Pricing placeholder is ready. Next step is wiring in your slab pricing spreadsheet." : "Select at least series, width, height, thickness, and style to prepare pricing."}</p><div class="message" style="margin-top:12px;">Planned inputs: series, material, style, size, thickness, core, unit type, jamb, handing, slab prep, bore, hinges, and spreadsheet price modifiers.</div></div>`;
+    }
+    function summaryRows() {
+      const unit = getSelectedUnit();
+      const selectedStyle = getSelectedStyle();
+      return [
+        ["Brand", state.config.brand], ["Use", labelFrom(useOptions, state.config.use) || "Not selected"], ["Type", unit?.label || "Not selected"],
+        ["Series", labelFrom(seriesOptions, state.config.series) || "Not selected"], ["Size", prettySize(state.config.width, state.config.height)],
+        ["Thickness", state.config.thickness || "Not selected"], ["Style", selectedStyle?.label || "Not selected"], ["Material", getMaterialLabel() || "Not selected"],
+        ...(showCore() ? [["Core", getCoreLabel() || "Not selected"]] : []),
+        ["Jamb", unit?.needsJamb ? `${state.config.jambSize || "?"} ${state.config.jambMaterial || ""}`.trim() : "Not required"],
+        ["Slab Prep", isSlabUnit(state.config.unitType) ? state.config.slabPrep || "Not selected" : "Not required"],
+        ["Handing", isSlabUnit(state.config.unitType) ? (state.config.slabPrep === "yes" ? state.config.handing || "Not selected" : "Not required") : (unit?.needsHanding ? state.config.handing || "Not selected" : "Not required")],
+        ["Bore", isSlabUnit(state.config.unitType) ? (state.config.slabPrep === "yes" ? state.config.bore || "Not selected" : "Not required") : (unit?.needsBore ? state.config.bore || "Not selected" : "Not required")],
+        ["Hinges", unit?.needsHinges ? state.config.hingeType || "Not selected" : "Not required"],
+      ];
+    }
+    function renderProductStep() {
+      const availableTypes = getAvailableUnitTypes();
+      return `<div class="block"><h3>Use</h3>${optionGrid(useOptions, state.config.use, "use", "two")}</div><div class="block"><h3>Type</h3>${state.config.use ? optionGrid(availableTypes, state.config.unitType, "unitType", "") : `<div class="message">Select Use first.</div>`}</div>`;
+    }
+    function renderSizeStep() {
+      return `<div class="block"><h3>Width Call Size</h3><select onchange="update('width', this.value)"><option value="">Select width</option>${widthOptions.map(option => `<option value="${option.id}" ${state.config.width === option.id ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}</select></div><div class="block"><h3>Height Call Size</h3>${optionGrid(heightOptions, state.config.height, "height", "")}</div><div class="block"><h3>Thickness</h3>${optionGrid(thicknesses, state.config.thickness, "thickness", "two")}</div><div class="message">Selected: <strong>${prettySize(state.config.width, state.config.height)}</strong></div>`;
+    }
+    function renderStyleStep() {
+      const steves = getActiveStyles().filter(x => x.family === "steves");
+      const masonite = getActiveStyles().filter(x => x.family === "masonite");
+      const activeMaterialOptions = materialOptionsBySeries[state.config.series] || [];
+      const activeCoreOptions = coreOptionsBySeries[state.config.series] || [];
+      return `<div class="block"><h3>Series</h3>${optionGrid(seriesOptions, state.config.series, "series", "")}</div>${!state.config.series ? `<div class="message">Select Molded, Flush, or Stile and Rail to continue.</div>` : ""}${state.config.series === "molded" ? `<div class="block"><h3>Door Style</h3><div class="block"><div class="group-label">Steves Doors</div><div class="style-grid">${steves.map(styleCard).join("")}</div></div><div class="block"><div class="group-label">Masonite Exclusives</div><div class="style-grid">${masonite.map(styleCard).join("")}</div></div></div><div class="block"><h3>Material</h3><div class="locked"><div class="locked-title">Molded</div><div class="option-note">Automatically selected because Molded is the only material for this series.</div></div></div><div class="block"><h3>Core</h3>${optionGrid(activeCoreOptions, state.config.core, "core", "two")}</div>` : ""}${state.config.series === "flush" ? `<div class="block"><h3>Door Style</h3><div class="locked"><div class="locked-title">Flush</div><div class="option-note">Automatically selected because Flush has only one style option.</div></div></div><div class="block"><h3>Material</h3>${optionGrid(activeMaterialOptions, state.config.material, "material", "two")}</div><div class="block"><h3>Core</h3>${optionGrid(activeCoreOptions, state.config.core, "core", "two")}</div>` : ""}${state.config.series === "stile-rail" ? `<div class="block"><h3>Door Style</h3><div class="style-grid">${stileRailStyles.map(styleCard).join("")}</div></div><div class="block"><h3>Material</h3>${optionGrid(activeMaterialOptions, state.config.material, "material", "two")}</div><div class="message">Core is not required for Stile and Rail because this construction is treated as naturally solid.</div>` : ""}`;
+    }
+    function renderJambStep() { return `<div class="block"><h3>Jamb Size</h3>${optionGrid(jambSizes, state.config.jambSize, "jambSize", "")}</div><div class="block"><h3>Jamb Material</h3>${optionGrid(jambMaterials, state.config.jambMaterial, "jambMaterial", "two")}</div>`; }
+    function renderPrepStep() {
+      const unit = getSelectedUnit();
+      return `${isSlabUnit(state.config.unitType) ? `<div class="block"><h3>Slab Prep</h3>${optionGrid(slabPrepOptions, state.config.slabPrep, "slabPrep", "two")}</div>` : ""}${(unit?.needsHanding || (isSlabUnit(state.config.unitType) && state.config.slabPrep === "yes")) ? `<div class="block"><h3>Handing</h3>${optionGrid(getHandingOptions(), state.config.handing, "handing", "two")}</div>` : ""}${(unit?.needsBore || (isSlabUnit(state.config.unitType) && state.config.slabPrep === "yes")) ? `<div class="block"><h3>Bore / Lock Prep</h3>${optionGrid(getBoreOptions(), state.config.bore, "bore", "")}</div>` : ""}`;
+    }
+    function renderHingesStep() { return `<div class="block"><h3>Hinge Type</h3>${optionGrid(getHingeTypeOptions(), state.config.hingeType, "hingeType", "")}</div>`; }
+    function renderReviewStep() {
+      return `<div class="block"><div class="locked"><div class="locked-title">Configuration Summary</div><div class="option-note">Review the selected choices before pricing, kit mapping, or SKU matching.</div></div></div><div class="block card" style="padding:18px;"><div class="card-title" style="margin-bottom:14px;">Summary</div><div class="summary-grid">${summaryRows().map(([label, value]) => `<div class="summary-item"><div class="summary-label">${escapeHtml(label)}</div><div class="summary-value">${escapeHtml(value)}</div></div>`).join("")}</div></div><div class="block"><textarea placeholder="Internal notes, exceptions, or custom prep..." oninput="state.config.notes=this.value">${escapeHtml(state.config.notes)}</textarea></div><pre>${escapeHtml(JSON.stringify(state.config, null, 2))}</pre>`;
+    }
+    function renderCurrentStep() {
+      const steps = getSteps();
+      const current = steps[state.step];
+      if (current.id === "product") return renderProductStep();
+      if (current.id === "size") return renderSizeStep();
+      if (current.id === "style") return renderStyleStep();
+      if (current.id === "jamb") return renderJambStep();
+      if (current.id === "prep") return renderPrepStep();
+      if (current.id === "hinges") return renderHingesStep();
+      if (current.id === "review") return renderReviewStep();
+      return "";
+    }
+    function render() {
+      const steps = getSteps();
+      const current = steps[state.step];
+      const canAdvance = isStepComplete(current.id);
+      document.getElementById("app").innerHTML = `<div class="page"><div class="header"><div><div class="pill">Door Shop Wizard</div><h1>Door Configurator</h1><p class="subtext">A broader wizard for interior and house-to-garage doors.</p></div><button class="btn outline" onclick="reset()">Reset</button></div><div class="steps"><div class="step-row">${steps.map((step, index) => `<button class="step-tab ${index === state.step ? "active" : isStepComplete(step.id) ? "complete" : ""}" onclick="setStep(${index})">${index + 1}. ${escapeHtml(step.title)}</button>`).join("")}</div></div><div class="layout"><main class="card main-card"><div class="section-head"><div class="step-meta">Step ${state.step + 1} of ${steps.length}</div><h2>${escapeHtml(current.title)}</h2><p class="helper">${escapeHtml(current.helper)}</p></div>${renderCurrentStep()}<div class="footer-actions"><button class="btn outline" ${state.step === 0 ? "disabled" : ""} onclick="setStep(${Math.max(0, state.step - 1)})">Back</button><button class="btn" ${state.step === steps.length - 1 || !canAdvance ? "disabled" : ""} onclick="setStep(${Math.min(steps.length - 1, state.step + 1)})">Next</button></div></main><aside class="right-rail">${livePreview()}${livePrice()}</aside></div></div>`;
+    }
+    render();
+  </script>
+</body>
+</html>

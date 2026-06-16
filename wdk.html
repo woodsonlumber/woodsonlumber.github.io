@@ -84,15 +84,15 @@
     .jamb-left { top: 0; left: 0; bottom: 0; }
     .jamb-right { top: 0; right: 0; bottom: 0; }
     .leaf-row { position: absolute; display: flex; align-items: stretch; justify-content: center; gap: 0; }
-    .leaf { position: relative; flex: 0 0 auto; border: 1px solid #475569; background: white; }
-    .leaf.double-left { border-right: 0; }
+    .leaf { position: relative; flex: 0 0 auto; outline: 1px solid #475569; outline-offset: -1px; background: white; }
+    .leaf.double-left { outline-offset: -1px; }
     .leaf.bypass-second { margin-left: -18%; margin-top: 7%; opacity: 0.96; z-index: 3; }
     .leaf-inner { position: relative; width: 100%; height: 100%; background: white; overflow: hidden; }
     .leaf-inner img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .blank-door { position: relative; width: 100%; height: 100%; background: linear-gradient(#ffffff, #f8fafc); }
     .blank-door::after { content: ""; position: absolute; inset: 4%; border: 1px solid #e2e8f0; background: linear-gradient(#ffffff, #f1f5f9); }
     .fold-line { position: absolute; top: 3%; bottom: 3%; left: 50%; border-left: 2px dashed #64748b; z-index: 5; }
-    .bore { position: absolute; border-radius: 999px; border: 1px solid #1e293b; background: white; box-shadow: 0 1px 5px rgba(15, 23, 42, 0.25); z-index: 8; }
+    .bore { position: absolute; border-radius: 999px; border: 0; background: #000; box-shadow: none; z-index: 8; }
     .ball-catch { position: absolute; width: 14px; height: 8px; border-radius: 999px; border: 1px solid #475569; background: #fff8df; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18); top: 6px; z-index: 9; }
     .price-box { background: #020617; color: white; border-radius: 18px; padding: 18px; margin-top: 12px; }
     .price-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #cbd5e1; font-weight: 900; }
@@ -278,16 +278,25 @@
       const maxPreviewHeight = 460;
       const scale = Math.min(maxPreviewWidth / overallWidth, maxPreviewHeight / overallHeight);
       const jambPx = usesJambInPreview() ? Math.max(10, Math.round(0.9 * scale)) : 0;
+      const renderedLeafWidth = slabWidth * scale;
+      const renderedLeafHeight = slabHeight * scale;
+      const renderedOpeningWidth = overallWidth * scale;
+      const renderedOpeningHeight = overallHeight * scale;
+
       return {
         slabWidth, slabHeight, leafCount, overallWidth, overallHeight, scale, jambPx,
-        renderedLeafWidth: Math.round(slabWidth * scale),
-        renderedLeafHeight: Math.round(slabHeight * scale),
-        renderedOpeningWidth: Math.round(overallWidth * scale),
-        renderedOpeningHeight: Math.round(overallHeight * scale),
-        renderedUnitWidth: Math.round(overallWidth * scale) + (jambPx * 2),
-        renderedUnitHeight: Math.round(overallHeight * scale) + jambPx,
+        renderedLeafWidth,
+        renderedLeafHeight,
+        renderedOpeningWidth,
+        renderedOpeningHeight,
+        renderedUnitWidth: renderedOpeningWidth + (jambPx * 2),
+        renderedUnitHeight: renderedOpeningHeight + jambPx,
       };
     }
+    function px(value) {
+      return `${Number(value).toFixed(2)}px`;
+    }
+
     function getPreviewCandidates() {
       const selectedStyle = getSelectedStyle();
       const code = sizeCode(state.config.width, state.config.height);
@@ -414,10 +423,12 @@
       const slabPrepEnabled = !isSlab || state.config.slabPrep === "yes";
       const boreType = state.config.bore;
       if (!slabPrepEnabled || !boreType || isBifold || isBypass) return "";
-      const backsetPx = Math.max(8, Math.round(2.375 * geometry.scale));
-      const boreDiameterPx = Math.max(10, Math.round(2.125 * geometry.scale));
-      const knobBottomPx = Math.round(36 * geometry.scale);
-      const deadboltBottomPx = Math.round((36 + 5.5) * geometry.scale);
+      const boreDiameterPx = Math.max(10, 2.125 * geometry.scale);
+      const boreRadiusPx = boreDiameterPx / 2;
+      const backsetCenterPx = 2.375 * geometry.scale;
+      const backsetEdgePx = Math.max(0, backsetCenterPx - boreRadiusPx);
+      const knobBottomPx = Math.max(0, (36 * geometry.scale) - boreRadiusPx);
+      const deadboltBottomPx = Math.max(0, ((36 + 5.5) * geometry.scale) - boreRadiusPx);
       if (boreType === "No Bore") return "";
       if (boreType === "No Bore with Ball Catch" && state.config.unitType !== "double-prehung") return "";
       let activeLeafIndex = 0;
@@ -433,9 +444,9 @@
         return `<div class="ball-catch" style="left: calc(${centerX} - 7px);"></div>`;
       }
       const horizontalProp = side === "left" ? "left" : "right";
-      const horizontalValue = `${backsetPx}px`;
-      let html = `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${knobBottomPx}px; width:${boreDiameterPx}px; height:${boreDiameterPx}px;" title="2-1/8&quot; bore, 2-3/8&quot; backset, 36&quot; centerline from slab base"></div>`;
-      if (boreType === "Double Bore") html += `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${deadboltBottomPx}px; width:${boreDiameterPx}px; height:${boreDiameterPx}px;" title="2-1/8&quot; bore, 2-3/8&quot; backset, upper prep"></div>`;
+      const horizontalValue = px(backsetEdgePx);
+      let html = `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${px(knobBottomPx)}; width:${px(boreDiameterPx)}; height:${px(boreDiameterPx)};" title="2-1/8&quot; bore, 2-3/8&quot; backset, 36&quot; centerline from slab base"></div>`;
+      if (boreType === "Double Bore") html += `<div class="bore" style="${horizontalProp}:${horizontalValue}; bottom:${px(deadboltBottomPx)}; width:${px(boreDiameterPx)}; height:${px(boreDiameterPx)};" title="2-1/8&quot; bore, 2-3/8&quot; backset, upper prep"></div>`;
       return html;
     }
     function previewLeaf(index, geometry) {
@@ -445,14 +456,14 @@
       const isBypass = state.config.unitType === "bypass";
       const isDouble = isDoubleUnit(state.config.unitType);
       const leafClasses = ["leaf", isDouble && index === 0 ? "double-left" : "", isBypass && index === 1 ? "bypass-second" : ""].join(" ");
-      return `<div class="${leafClasses}" style="width:${geometry.renderedLeafWidth}px; height:${geometry.renderedLeafHeight}px;"><div class="leaf-inner">${candidates.length ? `<img src="${escapeHtml(candidates[0])}" data-candidates="${candidatesJson}" data-index="0" onerror="nextImage(this)" alt="Door preview">` : `<div class="blank-door"></div>`}${isBifold ? `<div class="fold-line"></div>` : ""}${boreMarkers(index, geometry)}</div></div>`;
+      return `<div class="${leafClasses}" style="width:${px(geometry.renderedLeafWidth)}; height:${px(geometry.renderedLeafHeight)};"><div class="leaf-inner">${candidates.length ? `<img src="${escapeHtml(candidates[0])}" data-candidates="${candidatesJson}" data-index="0" onerror="nextImage(this)" alt="Door preview">` : `<div class="blank-door"></div>`}${isBifold ? `<div class="fold-line"></div>` : ""}${boreMarkers(index, geometry)}</div></div>`;
     }
     function livePreview() {
       const unit = getSelectedUnit();
       const geometry = getPreviewGeometry();
       const showLabels = hasActualSizeSelected();
-      const openingStyle = `left:${geometry.jambPx}px; top:${geometry.jambPx}px; width:${geometry.renderedOpeningWidth}px; height:${geometry.renderedOpeningHeight}px;`;
-      return `<div class="card preview-card"><div class="card-title-row"><div class="card-title">Live Preview</div>${unit?.label ? `<div class="mini-pill">${escapeHtml(unit.label)}</div>` : ""}</div><div class="preview-stage"><div class="overall-label">${showLabels ? `Overall Unit: ${geometry.overallWidth}" W x ${geometry.overallHeight}" H` : ""}</div><div class="preview-hint">${showLabels ? "" : "Select width and height to display the actual unit size."}</div><div class="door-wrap"><div class="unit-box" style="width:${geometry.renderedUnitWidth}px; height:${geometry.renderedUnitHeight}px;">${showLabels ? `<div class="unit-width-label">${geometry.overallWidth}" Overall Width</div>` : ""}${showLabels ? `<div class="unit-height-label">${geometry.overallHeight}" Height</div>` : ""}<div class="unit-shell">${usesJambInPreview() ? `<div class="jamb-wrap"><div class="jamb-top" style="height:${geometry.jambPx}px;"></div><div class="jamb-left" style="width:${geometry.jambPx}px;"></div><div class="jamb-right" style="width:${geometry.jambPx}px;"></div></div>` : ""}<div class="leaf-row" style="${openingStyle}">${Array.from({ length: geometry.leafCount }).map((_, index) => previewLeaf(index, geometry)).join("")}</div></div></div></div></div></div>`;
+      const openingStyle = `left:${px(geometry.jambPx)}; top:${px(geometry.jambPx)}; width:${px(geometry.renderedOpeningWidth)}; height:${px(geometry.renderedOpeningHeight)};`;
+      return `<div class="card preview-card"><div class="card-title-row"><div class="card-title">Live Preview</div>${unit?.label ? `<div class="mini-pill">${escapeHtml(unit.label)}</div>` : ""}</div><div class="preview-stage"><div class="overall-label">${showLabels ? `Overall Unit: ${geometry.overallWidth}" W x ${geometry.overallHeight}" H` : ""}</div><div class="preview-hint">${showLabels ? "" : "Select width and height to display the actual unit size."}</div><div class="door-wrap"><div class="unit-box" style="width:${px(geometry.renderedUnitWidth)}; height:${px(geometry.renderedUnitHeight)};">${showLabels ? `<div class="unit-width-label">${geometry.overallWidth}" Overall Width</div>` : ""}${showLabels ? `<div class="unit-height-label">${geometry.overallHeight}" Height</div>` : ""}<div class="unit-shell">${usesJambInPreview() ? `<div class="jamb-wrap"><div class="jamb-top" style="height:${px(geometry.jambPx)};"></div><div class="jamb-left" style="width:${px(geometry.jambPx)};"></div><div class="jamb-right" style="width:${px(geometry.jambPx)};"></div></div>` : ""}<div class="leaf-row" style="${openingStyle}">${Array.from({ length: geometry.leafCount }).map((_, index) => previewLeaf(index, geometry)).join("")}</div></div></div></div></div></div>`;
     }
     function livePrice() {
       const ready = Boolean(state.config.series && state.config.width && state.config.height && state.config.thickness && state.config.style);
